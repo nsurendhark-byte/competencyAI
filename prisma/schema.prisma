@@ -1,0 +1,547 @@
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id               String            @id @default(uuid())
+  email            String            @unique
+  mobile           String?           @unique
+  passwordHash     String
+  fullName         String
+  role             String            @default("LEARNER") // LEARNER, ADMIN
+  isVerified       Boolean           @default(false)
+  verificationToken String?
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+
+  profile          Profile?
+  assessmentAttempts AssessmentAttempt[]
+  practiceAttempts PracticeAttempt[]
+  codingSubmissions CodingSubmission[]
+  projectSubmissions ProjectSubmission[]
+  learningProgress LearningProgress[]
+  skillMasteries   SkillMastery[]
+  roadmaps         Roadmap[]
+  careerReadiness  CareerReadiness?
+  careerTwin       CareerTwin?
+  studySessions    StudySession[]
+  userAchievements UserAchievement[]
+  aiConversations  AIConversation[]
+  interviewSessions InterviewSession[]
+  issueReports     IssueReport[]
+  notifications    Notification[]
+}
+
+model Profile {
+  id            String   @id @default(uuid())
+  userId        String   @unique
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  bio           String?
+  avatarUrl     String?
+  targetCareerId String?
+  weeklyHoursTarget Int  @default(10)
+  onboardingCompleted Boolean @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model AdminUser {
+  id           String    @id @default(uuid())
+  email        String    @unique
+  passwordHash String
+  fullName     String
+  role         String    @default("SUPER_ADMIN")
+  mustChangePassword Boolean @default(true)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  auditLogs    AuditLog[]
+  contentVersions ContentVersion[]
+}
+
+model AdminRole {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  permissions String   // JSON array string
+  createdAt   DateTime @default(now())
+}
+
+model Career {
+  id          String   @id @default(uuid())
+  title       String   @unique
+  slug        String   @unique
+  description String
+  status      String   @default("PUBLISHED") // DRAFT, IN_REVIEW, PUBLISHED, ARCHIVED
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  skills      Skill[]
+  roadmaps    Roadmap[]
+  courses     Course[]
+}
+
+model Skill {
+  id           String   @id @default(uuid())
+  careerId     String?
+  career       Career?  @relation(fields: [careerId], references: [id], onDelete: SetNull)
+  name         String   @unique
+  slug         String   @unique
+  category     String
+  description  String
+  status       String   @default("PUBLISHED")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  levels       SkillLevel[]
+  prerequisites SkillDependency[] @relation("Prerequisites")
+  dependents   SkillDependency[] @relation("Dependents")
+  questions    Question[]
+  lessons      Lesson[]
+  practiceQuestions PracticeQuestion[]
+  codingChallenges CodingChallenge[]
+  projects     Project[]
+  masteries    SkillMastery[]
+}
+
+model SkillLevel {
+  id          String   @id @default(uuid())
+  skillId     String
+  skill       Skill    @relation(fields: [skillId], references: [id], onDelete: Cascade)
+  levelNumber Int      // 1 to 10
+  title       String
+  description String
+  topics      String   // JSON string
+  createdAt   DateTime @default(now())
+
+  @@unique([skillId, levelNumber])
+}
+
+model SkillDependency {
+  id            String   @id @default(uuid())
+  skillId       String
+  skill         Skill    @relation("Dependents", fields: [skillId], references: [id], onDelete: Cascade)
+  prerequisiteId String
+  prerequisite  Skill    @relation("Prerequisites", fields: [prerequisiteId], references: [id], onDelete: Cascade)
+
+  @@unique([skillId, prerequisiteId])
+}
+
+model Course {
+  id          String   @id @default(uuid())
+  careerId    String?
+  career      Career?  @relation(fields: [careerId], references: [id], onDelete: SetNull)
+  title       String
+  slug        String   @unique
+  description String
+  status      String   @default("PUBLISHED")
+  createdAt   DateTime @default(now())
+
+  modules     Module[]
+}
+
+model Module {
+  id          String   @id @default(uuid())
+  courseId    String
+  course      Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  title       String
+  orderIndex  Int
+  createdAt   DateTime @default(now())
+
+  lessons     Lesson[]
+}
+
+model Lesson {
+  id          String   @id @default(uuid())
+  moduleId    String
+  module      Module   @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  skillId     String?
+  skill       Skill?   @relation(fields: [skillId], references: [id], onDelete: SetNull)
+  levelNumber Int      @default(1)
+  title       String
+  description String
+  theory      String
+  codeExamples String? // JSON string
+  videoUrl    String?
+  estimatedTimeMinutes Int @default(30)
+  status      String   @default("PUBLISHED")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  resources   Resource[]
+  progress    LearningProgress[]
+}
+
+model Resource {
+  id          String   @id @default(uuid())
+  lessonId    String
+  lesson      Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  title       String
+  type        String   // DOC, VIDEO, LINK, REPO
+  url         String
+  createdAt   DateTime @default(now())
+}
+
+model Question {
+  id          String   @id @default(uuid())
+  skillId     String
+  skill       Skill    @relation(fields: [skillId], references: [id], onDelete: Cascade)
+  levelNumber Int      // 1 to 10
+  type        String   // MCQ, CODE_OUTPUT, DEBUGGING, SCENARIO
+  title       String
+  prompt      String
+  explanation String?
+  codeSnippet String?
+  difficulty  String   @default("MEDIUM")
+  status      String   @default("PUBLISHED")
+  createdAt   DateTime @default(now())
+
+  options     QuestionOption[]
+  assessmentQuestions AssessmentQuestion[]
+  assessmentAnswers AssessmentAnswer[]
+}
+
+model QuestionOption {
+  id          String   @id @default(uuid())
+  questionId  String
+  question    Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  optionText  String
+  isCorrect   Boolean  @default(false)
+}
+
+model Assessment {
+  id          String   @id @default(uuid())
+  title       String
+  description String
+  totalQuestions Int   @default(100)
+  status      String   @default("PUBLISHED")
+  createdAt   DateTime @default(now())
+
+  questions   AssessmentQuestion[]
+  attempts    AssessmentAttempt[]
+}
+
+model AssessmentQuestion {
+  id           String     @id @default(uuid())
+  assessmentId String
+  assessment   Assessment @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
+  questionId   String
+  question     Question   @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  orderIndex   Int
+}
+
+model AssessmentAttempt {
+  id           String     @id @default(uuid())
+  userId       String
+  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  assessmentId String
+  assessment   Assessment @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
+  overallScore Float      @default(0.0)
+  status       String     @default("IN_PROGRESS") // IN_PROGRESS, COMPLETED
+  startedAt    DateTime   @default(now())
+  completedAt  DateTime?
+
+  answers      AssessmentAnswer[]
+}
+
+model AssessmentAnswer {
+  id                 String            @id @default(uuid())
+  attemptId          String
+  attempt            AssessmentAttempt @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  questionId         String
+  question           Question          @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  selectedOptionId   String?
+  userCode           String?
+  isCorrect          Boolean           @default(false)
+  timeTakenSeconds   Int               @default(0)
+  createdAt          DateTime          @default(now())
+}
+
+model PracticeQuestion {
+  id          String   @id @default(uuid())
+  skillId     String
+  skill       Skill    @relation(fields: [skillId], references: [id], onDelete: Cascade)
+  levelNumber Int      @default(1)
+  type        String   // MCQ, DEBUGGING, FILL_CODE, OUTPUT
+  title       String
+  prompt      String
+  explanation String
+  options     String   // JSON string
+  correctOptionIndex Int
+  createdAt   DateTime @default(now())
+
+  attempts    PracticeAttempt[]
+}
+
+model PracticeAttempt {
+  id                 String           @id @default(uuid())
+  userId             String
+  user               User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  practiceQuestionId String
+  practiceQuestion   PracticeQuestion @relation(fields: [practiceQuestionId], references: [id], onDelete: Cascade)
+  isCorrect          Boolean
+  timeTakenSeconds   Int              @default(0)
+  createdAt          DateTime         @default(now())
+}
+
+model CodingChallenge {
+  id           String   @id @default(uuid())
+  skillId      String
+  skill        Skill    @relation(fields: [skillId], references: [id], onDelete: Cascade)
+  levelNumber  Int      @default(1)
+  title        String
+  description  String
+  starterCode  String
+  testCases    String   // JSON array string of { input, expectedOutput, isHidden }
+  constraints  String?
+  status       String   @default("PUBLISHED")
+  createdAt    DateTime @default(now())
+
+  submissions  CodingSubmission[]
+}
+
+model CodingSubmission {
+  id                 String          @id @default(uuid())
+  userId             String
+  user               User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  challengeId        String
+  challenge          CodingChallenge @relation(fields: [challengeId], references: [id], onDelete: Cascade)
+  code               String
+  status             String          // PASSED, FAILED, RUNTIME_ERROR, TIMEOUT
+  testsPassed        Int             @default(0)
+  totalTests         Int             @default(0)
+  aiFeedback         String?
+  createdAt          DateTime        @default(now())
+}
+
+model Project {
+  id           String   @id @default(uuid())
+  skillId      String?
+  skill        Skill?   @relation(fields: [skillId], references: [id], onDelete: SetNull)
+  title        String
+  description  String
+  requirements String   // JSON string
+  starterRepo  String?
+  status       String   @default("PUBLISHED")
+  createdAt    DateTime @default(now())
+
+  submissions  ProjectSubmission[]
+}
+
+model ProjectSubmission {
+  id           String   @id @default(uuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  projectId    String
+  project      Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  repositoryUrl String
+  liveDemoUrl  String?
+  score        Float    @default(0.0)
+  aiReview     String?  // JSON string breakdown
+  status       String   @default("SUBMITTED")
+  createdAt    DateTime @default(now())
+}
+
+model Roadmap {
+  id          String   @id @default(uuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  careerId    String
+  career      Career   @relation(fields: [careerId], references: [id], onDelete: Cascade)
+  title       String
+  status      String   @default("ACTIVE")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  items       RoadmapItem[]
+}
+
+model RoadmapItem {
+  id          String   @id @default(uuid())
+  roadmapId   String
+  roadmap     Roadmap  @relation(fields: [roadmapId], references: [id], onDelete: Cascade)
+  weekNumber  Int
+  skillName   String
+  title       String
+  description String
+  isCompleted Boolean  @default(false)
+  createdAt   DateTime @default(now())
+}
+
+model LearningProgress {
+  id          String   @id @default(uuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lessonId    String
+  lesson      Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  status      String   @default("COMPLETED")
+  completedAt DateTime @default(now())
+
+  @@unique([userId, lessonId])
+}
+
+model SkillMastery {
+  id          String   @id @default(uuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  skillId     String
+  skill       Skill    @relation(fields: [skillId], references: [id], onDelete: Cascade)
+  levelMastered Int    @default(1)
+  masteryPercentage Float @default(0.0)
+  status      String   @default("AVAILABLE") // LOCKED, AVAILABLE, IN_PROGRESS, MASTERED, VERIFIED
+  updatedAt   DateTime @updatedAt
+
+  @@unique([userId, skillId])
+}
+
+model CareerReadiness {
+  id               String   @id @default(uuid())
+  userId           String   @unique
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  readinessPercent Float    @default(0.0)
+  skillScore       Float    @default(0.0)
+  codingScore      Float    @default(0.0)
+  projectScore     Float    @default(0.0)
+  interviewScore   Float    @default(0.0)
+  breakdown        String   // JSON string
+  updatedAt        DateTime @updatedAt
+}
+
+model CareerTwin {
+  id               String   @id @default(uuid())
+  userId           String   @unique
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  currentProfile   String   // JSON string of skill capabilities
+  targetProfile    String   // JSON string of benchmark job target capabilities
+  gapAnalysis      String   // JSON string
+  updatedAt        DateTime @updatedAt
+}
+
+model StudySession {
+  id          String   @id @default(uuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title       String
+  scheduledAt DateTime
+  durationMinutes Int  @default(60)
+  isCompleted Boolean  @default(false)
+  createdAt   DateTime @default(now())
+}
+
+model Achievement {
+  id          String   @id @default(uuid())
+  code        String   @unique
+  title       String
+  description String
+  badgeIcon   String
+  createdAt   DateTime @default(now())
+
+  users       UserAchievement[]
+}
+
+model UserAchievement {
+  id            String      @id @default(uuid())
+  userId        String
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  achievementId String
+  achievement   Achievement @relation(fields: [achievementId], references: [id], onDelete: Cascade)
+  unlockedAt    DateTime    @default(now())
+
+  @@unique([userId, achievementId])
+}
+
+model AIConversation {
+  id          String   @id @default(uuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  topic       String   @default("Aura Mentor")
+  createdAt   DateTime @default(now())
+
+  messages    AIMessage[]
+}
+
+model AIMessage {
+  id             String         @id @default(uuid())
+  conversationId String
+  conversation   AIConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  sender         String         // USER, AURA
+  content        String
+  createdAt      DateTime       @default(now())
+}
+
+model InterviewSession {
+  id          String   @id @default(uuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  mode        String   // TECHNICAL, HR, CODING, BEHAVIORAL, SYSTEM_DESIGN
+  status      String   @default("COMPLETED")
+  createdAt   DateTime @default(now())
+
+  results     InterviewResult?
+}
+
+model InterviewResult {
+  id               String           @id @default(uuid())
+  interviewSessionId String         @unique
+  interviewSession InterviewSession @relation(fields: [interviewSessionId], references: [id], onDelete: Cascade)
+  score            Float            @default(0.0)
+  feedback         String           // JSON string
+  createdAt        DateTime         @default(now())
+}
+
+model IssueReport {
+  id          String   @id @default(uuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  contentType String   // LESSON, QUESTION, PRACTICE, CODING, PROJECT, RESOURCE, AI_RESPONSE
+  contentId   String
+  issueType   String   // WRONG_ANSWER, INCORRECT_EXPLANATION, BROKEN_CODE, TYPO, OTHER
+  description String
+  status      String   @default("NEW") // NEW, REVIEWING, FIXED, REJECTED, CLOSED
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model ContentVersion {
+  id          String    @id @default(uuid())
+  adminId     String
+  admin       AdminUser @relation(fields: [adminId], references: [id], onDelete: Cascade)
+  entityType  String    // LESSON, QUESTION, PRACTICE, CODING
+  entityId    String
+  version     Int
+  contentData String    // JSON string of snapshot
+  changeReason String
+  createdAt   DateTime  @default(now())
+}
+
+model Notification {
+  id          String   @id @default(uuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title       String
+  message     String
+  isRead      Boolean  @default(false)
+  createdAt   DateTime @default(now())
+}
+
+model ContactMessage {
+  id          String   @id @default(uuid())
+  fullName    String
+  email       String
+  subject     String
+  message     String
+  createdAt   DateTime @default(now())
+}
+
+model AuditLog {
+  id          String    @id @default(uuid())
+  adminId     String?
+  admin       AdminUser? @relation(fields: [adminId], references: [id], onDelete: SetNull)
+  action      String
+  details     String
+  createdAt   DateTime  @default(now())
+}
