@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import PublicNavbar from '@/components/PublicNavbar';
 import PublicFooter from '@/components/PublicFooter';
 import { Cpu, ArrowRight, AlertCircle, Lock, Mail } from 'lucide-react';
+import { safeFetch } from '@/lib/api-response';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -20,18 +21,17 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      const res = await fetch('/api/auth/login', {
+      const res = await safeFetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ identifier, password })
       });
-      const data = await res.json();
 
       if (!res.ok) {
-        throw new Error(data.error || 'Authentication failed.');
+        throw new Error(res.data.error || res.data.message || 'Authentication failed.');
       }
 
-      router.push(data.redirectTo || '/app/dashboard');
+      router.push(res.data.redirectTo || '/app/dashboard');
     } catch (err: any) {
       setError(err.message || 'Login failed');
     } finally {

@@ -21,6 +21,7 @@ import {
   FileCheck,
   History
 } from 'lucide-react';
+import { safeFetch } from '@/lib/api-response';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -36,11 +37,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       return;
     }
 
-    fetch('/api/admin/me')
-      .then(res => res.json())
-      .then(data => {
-        if (data.authenticated) {
-          setAdmin(data.admin);
+    safeFetch('/api/admin/me')
+      .then(res => {
+        if (res.ok && res.data?.authenticated) {
+          setAdmin(res.data.admin);
         } else {
           router.push('/admin/login');
         }
@@ -48,6 +48,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       .catch(() => router.push('/admin/login'))
       .finally(() => setLoading(false));
   }, [pathname, isLoginPage, router]);
+
+  const handleAdminLogout = async () => {
+    await safeFetch('/api/admin/logout', { method: 'POST' });
+    router.push('/admin/login');
+  };
 
   if (isLoginPage) return <>{children}</>;
 
@@ -88,7 +93,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </div>
 
         <div className="px-4 py-2 bg-slate-950 border-b border-slate-800 text-[11px] font-mono text-slate-400 flex items-center justify-between">
-          <span className="truncate">{admin?.email}</span>
+          <span className="truncate">{admin?.email || 'ADMIN SESSION'}</span>
           <span className="px-1.5 py-0.5 rounded bg-emerald-950 text-emerald-400 text-[9px]">SUPER</span>
         </div>
 
@@ -113,13 +118,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </nav>
 
         <div className="p-3 border-t border-slate-800">
-          <Link
-            href="/admin/login"
+          <button
+            onClick={handleAdminLogout}
             className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-mono text-rose-400 hover:bg-rose-950/40 border border-transparent hover:border-rose-900 transition-colors"
           >
             <LogOut className="w-4 h-4" />
             <span>EXIT ADMIN SYSTEM</span>
-          </Link>
+          </button>
         </div>
       </aside>
 

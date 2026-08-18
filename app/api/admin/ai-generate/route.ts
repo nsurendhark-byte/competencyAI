@@ -1,18 +1,19 @@
 import { NextResponse } from 'next/server';
 import { parseSessionToken } from '@/lib/auth';
 import { readDB, writeDB } from '@/lib/db';
+import { jsonSuccess, jsonError } from '@/lib/api-response';
 import crypto from 'crypto';
 
 export async function POST(req: Request) {
   try {
     const cookieHeader = req.headers.get('cookie');
-    if (!cookieHeader) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    if (!cookieHeader) return jsonError('Unauthorized admin access', 401);
 
     const match = cookieHeader.match(/competency_admin_session=([^;]+)/);
-    if (!match) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    if (!match) return jsonError('Unauthorized admin access', 401);
 
     const session = parseSessionToken(match[1]);
-    if (!session || session.role !== 'ADMIN') return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    if (!session || session.role !== 'ADMIN') return jsonError('Forbidden admin access', 403);
 
     const { type, skillId, levelNumber, topic } = await req.json();
     const db = readDB();
@@ -57,12 +58,11 @@ export async function POST(req: Request) {
 
     writeDB(db);
 
-    return NextResponse.json({
-      message: 'AI Content generated successfully in DRAFT state.',
+    return jsonSuccess({
       id: newId,
       status: 'DRAFT'
-    });
+    }, 'AI Content generated successfully in DRAFT state.');
   } catch (err: any) {
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    return jsonError(err.message || 'Failed to generate AI content', 500);
   }
 }

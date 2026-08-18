@@ -1,17 +1,18 @@
 import { NextResponse } from 'next/server';
 import { parseSessionToken } from '@/lib/auth';
 import { readDB } from '@/lib/db';
+import { jsonSuccess, jsonError } from '@/lib/api-response';
 
 export async function GET(req: Request) {
   try {
     const cookieHeader = req.headers.get('cookie');
-    if (!cookieHeader) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    if (!cookieHeader) return jsonError('Unauthorized admin access', 401);
 
     const match = cookieHeader.match(/competency_admin_session=([^;]+)/);
-    if (!match) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    if (!match) return jsonError('Unauthorized admin access', 401);
 
     const session = parseSessionToken(match[1]);
-    if (!session || session.role !== 'ADMIN') return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    if (!session || session.role !== 'ADMIN') return jsonError('Forbidden - Admin access required', 403);
 
     const db = readDB();
 
@@ -37,8 +38,8 @@ export async function GET(req: Request) {
       };
     });
 
-    return NextResponse.json({ users });
+    return jsonSuccess({ users });
   } catch (err: any) {
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    return jsonError(err.message || 'Failed to fetch users', 500);
   }
 }

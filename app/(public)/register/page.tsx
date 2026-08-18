@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import PublicNavbar from '@/components/PublicNavbar';
 import PublicFooter from '@/components/PublicFooter';
 import { Cpu, ArrowRight, AlertCircle, CheckCircle2, Lock, Mail, Phone, User } from 'lucide-react';
+import { safeFetch } from '@/lib/api-response';
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -30,24 +31,28 @@ export default function RegisterPage() {
       return;
     }
 
+    if (form.password.length < 8) {
+      setError('Password must be at least 8 characters long.');
+      return;
+    }
+
     setLoading(true);
 
     try {
-      const res = await fetch('/api/auth/register', {
+      const res = await safeFetch('/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form)
       });
-      const data = await res.json();
 
       if (!res.ok) {
-        throw new Error(data.error || 'Registration failed.');
+        throw new Error(res.data.error || 'Registration failed.');
       }
 
-      setSuccess('Account created successfully! Auto-logging you in...');
+      setSuccess('Account created successfully! Logging you in...');
       
       // Auto login
-      const loginRes = await fetch('/api/auth/login', {
+      const loginRes = await safeFetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ identifier: form.email, password: form.password })
@@ -55,12 +60,12 @@ export default function RegisterPage() {
       
       if (loginRes.ok) {
         setTimeout(() => {
-          router.push('/app/onboarding');
-        }, 1200);
+          router.push(loginRes.data.redirectTo || '/app/onboarding');
+        }, 1000);
       } else {
         setTimeout(() => {
           router.push('/login');
-        }, 1500);
+        }, 1200);
       }
     } catch (err: any) {
       setError(err.message || 'Registration failed');

@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { readDB } from '@/lib/db';
 import { verifyPassword, ensureSeededData } from '@/lib/seed-data';
 import { createSessionToken } from '@/lib/auth';
+import { jsonSuccess, jsonError } from '@/lib/api-response';
 
 export async function POST(req: Request) {
   try {
@@ -9,21 +10,21 @@ export async function POST(req: Request) {
     const { identifier, password } = await req.json();
 
     if (!identifier || !password) {
-      return NextResponse.json({ error: 'Email/Mobile and Password are required.' }, { status: 400 });
+      return jsonError('Email/Mobile and Password are required.', 400);
     }
 
     const db = readDB();
     const query = identifier.trim().toLowerCase();
 
     // Match Email or Mobile
-    const user = db.users.find(u => u.email === query || u.mobile === query);
+    const user = db.users.find(u => u.email.toLowerCase() === query || u.mobile === query);
 
     if (!user) {
-      return NextResponse.json({ error: 'Invalid credentials. User not found.' }, { status: 401 });
+      return jsonError('Invalid credentials. User not found.', 401);
     }
 
     if (!verifyPassword(password, user.passwordHash)) {
-      return NextResponse.json({ error: 'Invalid password.' }, { status: 401 });
+      return jsonError('Invalid password.', 401);
     }
 
     const profile = db.profiles.find(p => p.userId === user.id);
@@ -38,6 +39,7 @@ export async function POST(req: Request) {
     });
 
     const response = NextResponse.json({
+      success: true,
       message: 'Login successful',
       user: {
         id: user.id,
@@ -61,6 +63,6 @@ export async function POST(req: Request) {
 
     return response;
   } catch (err: any) {
-    return NextResponse.json({ error: err.message || 'Authentication error' }, { status: 500 });
+    return jsonError(err.message || 'Authentication error', 500);
   }
 }

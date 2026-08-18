@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { ShieldAlert, ArrowRight, AlertCircle, Lock, Mail } from 'lucide-react';
+import { safeFetch } from '@/lib/api-response';
 
 export default function AdminLoginPage() {
   const router = useRouter();
@@ -17,18 +18,17 @@ export default function AdminLoginPage() {
     setLoading(true);
 
     try {
-      const res = await fetch('/api/admin/login', {
+      const res = await safeFetch('/api/admin/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password })
       });
-      const data = await res.json();
 
       if (!res.ok) {
-        throw new Error(data.error || 'Admin authentication failed.');
+        throw new Error(res.data.error || res.data.message || 'Admin authentication failed.');
       }
 
-      router.push('/admin/dashboard');
+      router.push(res.data.redirectTo || '/admin/dashboard');
     } catch (err: any) {
       setError(err.message || 'Authentication error');
     } finally {

@@ -28,6 +28,7 @@ import {
   X,
   AlertTriangle
 } from 'lucide-react';
+import { safeFetch } from '@/lib/api-response';
 
 export default function LearnerAppLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -37,11 +38,10 @@ export default function LearnerAppLayout({ children }: { children: React.ReactNo
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
-    fetch('/api/auth/me')
-      .then(res => res.json())
-      .then(data => {
-        if (data.authenticated) {
-          setUser(data.user);
+    safeFetch('/api/auth/me')
+      .then(res => {
+        if (res.ok && res.data?.authenticated) {
+          setUser(res.data.user);
         } else {
           router.push('/login');
         }
@@ -73,7 +73,7 @@ export default function LearnerAppLayout({ children }: { children: React.ReactNo
   ];
 
   const handleLogout = async () => {
-    await fetch('/api/auth/logout', { method: 'POST' });
+    await safeFetch('/api/auth/logout', { method: 'POST' });
     router.push('/login');
   };
 
@@ -192,7 +192,7 @@ export default function LearnerAppLayout({ children }: { children: React.ReactNo
         {children}
       </main>
 
-      {/* MOBILE TOUCH BOTTOM NAVIGATION (Requirement 41) */}
+      {/* MOBILE TOUCH BOTTOM NAVIGATION */}
       <div className="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-surface border-t border-surfaceBorder flex items-center justify-around z-40 px-2">
         <Link href="/app/dashboard" className="flex flex-col items-center gap-1 text-[10px] font-mono text-slate-400 hover:text-cyan-400 min-w-[44px]">
           <LayoutDashboard className="w-5 h-5 text-cyan-400" />

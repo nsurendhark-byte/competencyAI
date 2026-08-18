@@ -1,22 +1,23 @@
 import { NextResponse } from 'next/server';
 import { parseSessionToken } from '@/lib/auth';
 import { readDB } from '@/lib/db';
+import { jsonSuccess, jsonError } from '@/lib/api-response';
 
 export async function GET(req: Request) {
   try {
     const cookieHeader = req.headers.get('cookie');
     if (!cookieHeader) {
-      return NextResponse.json({ authenticated: false }, { status: 401 });
+      return jsonError('Unauthenticated', 401, { authenticated: false });
     }
 
     const match = cookieHeader.match(/competency_session=([^;]+)/);
     if (!match) {
-      return NextResponse.json({ authenticated: false }, { status: 401 });
+      return jsonError('Unauthenticated', 401, { authenticated: false });
     }
 
     const session = parseSessionToken(match[1]);
     if (!session) {
-      return NextResponse.json({ authenticated: false }, { status: 401 });
+      return jsonError('Invalid or expired session', 401, { authenticated: false });
     }
 
     const db = readDB();
@@ -24,10 +25,10 @@ export async function GET(req: Request) {
     const profile = db.profiles.find(p => p.userId === session.id);
 
     if (!user) {
-      return NextResponse.json({ authenticated: false }, { status: 401 });
+      return jsonError('User account not found', 401, { authenticated: false });
     }
 
-    return NextResponse.json({
+    return jsonSuccess({
       authenticated: true,
       user: {
         id: user.id,
@@ -40,6 +41,6 @@ export async function GET(req: Request) {
       }
     });
   } catch (e: any) {
-    return NextResponse.json({ authenticated: false }, { status: 500 });
+    return jsonError(e.message || 'Session verification error', 500, { authenticated: false });
   }
 }

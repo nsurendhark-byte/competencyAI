@@ -14,15 +14,17 @@ import {
   ArrowRight,
   LineChart
 } from 'lucide-react';
+import { safeFetch } from '@/lib/api-response';
 
 export default function AdminDashboardPage() {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('/api/admin/stats')
-      .then(res => res.json())
-      .then(resData => setData(resData))
+    safeFetch('/api/admin/stats')
+      .then(res => {
+        if (res.ok) setData(res.data);
+      })
       .catch(console.error)
       .finally(() => setLoading(false));
   }, []);
