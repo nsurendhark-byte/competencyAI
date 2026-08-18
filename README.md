@@ -4,6 +4,8 @@
 
 **CompetencyAI** is an AI-powered competency-based learning and career-readiness platform built with a bespoke "Career Intelligence OS" design system.
 
+- 🌐 **Live Web Site**: [https://nsurendhark-byte.github.io/competencyAI/](https://nsurendhark-byte.github.io/competencyAI/)
+
 ---
 
 ## 🌟 Key Product Features
@@ -30,7 +32,7 @@ Set the following variables in `.env`:
 - `DATABASE_URL`: Connection string for local SQLite or production PostgreSQL.
 - `AUTH_SECRET`: Secret HMAC key for session token signing.
 - `GEMINI_API_KEY`: Google Gemini AI key for server-side AI mentoring and gap analysis.
-- `APP_URL`: Base application URL (e.g. `http://localhost:3000` or production domain).
+- `APP_URL`: Base application URL (`https://nsurendhark-byte.github.io/competencyAI` or local `http://localhost:3000`).
 
 ### 2. Seed Initial Database
 Run the seed script to populate baseline career tracks, 10-level skills, questions, and default seed accounts:
@@ -43,25 +45,25 @@ node scripts/seed.js
 # Run local development server
 npm run dev
 
-# Or build and launch production server
+# Or build static export site for deployment
 npm run build
-npm run start
 ```
 
 Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ---
 
-## 🌐 Full-Stack Server Deployment (Vercel)
+## 🌐 Deployment Options
 
-CompetencyAI is a full-stack Next.js application containing server-side API endpoints (`/api/*`), HTTP-only cookies, authentication verification, database operations, and Google Gemini API integrations.
+### Option A: GitHub Pages (Static Deployment)
+CompetencyAI is configured with Next.js static HTML export (`output: 'export'`) and `basePath: '/competencyAI'`.
+GitHub Actions automatically builds `./out` and deploys the application bundle to [https://nsurendhark-byte.github.io/competencyAI/](https://nsurendhark-byte.github.io/competencyAI/).
 
-> ⚠️ **Deployment Architecture Notice**:
-> GitHub Pages is a static file host and **cannot** run Node.js server runtimes or API routes.
-> For production deployment, host CompetencyAI on **[Vercel](https://vercel.com)**:
-> 1. Import repository `nsurendhark-byte/competencyAI` in Vercel.
-> 2. Add Environment Variables (`DATABASE_URL`, `AUTH_SECRET`, `GEMINI_API_KEY`, `APP_URL`).
-> 3. Click **Deploy**.
+### Option B: Full-Stack Vercel Server Deployment
+To run dynamic Node.js server features (live database persistence, server-side API handlers, HTTP-only cookie sessions):
+1. Connect repository `nsurendhark-byte/competencyAI` to **[Vercel](https://vercel.com)**.
+2. Supply Environment Variables (`DATABASE_URL`, `AUTH_SECRET`, `GEMINI_API_KEY`, `APP_URL`).
+3. Click **Deploy**.
 
 ---
 
@@ -69,6 +71,5 @@ CompetencyAI is a full-stack Next.js application containing server-side API endp
 
 - **Learner Accounts**: Users can register at `/register` or log in at `/login`. Passwords are encrypted using PBKDF2 hashing.
 - **Admin Accounts**: Access to `/admin/*` requires administrator authorization (`role === 'ADMIN'`).
-- **Server Authorization**: All admin endpoints are protected server-side returning `401 Unauthorized` for unauthenticated requests and `403 Forbidden` for non-admin users.
 
 > 🛑 **SECURITY WARNING**: Never commit real passwords, API keys, or JWT secrets to Git. If any password or secret was previously pushed to a public repository, **change and rotate it immediately** in production.

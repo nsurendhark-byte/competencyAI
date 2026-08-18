@@ -3,7 +3,9 @@ import { parseSessionToken } from '@/lib/auth';
 import { readDB, writeDB } from '@/lib/db';
 import { jsonSuccess, jsonError } from '@/lib/api-response';
 
-export const dynamic = 'force-dynamic';
+export function generateStaticParams() {
+  return [{ id: 'default' }];
+}
 
 function verifyAdminSession(req: Request) {
   const cookieHeader = req.headers.get('cookie');
