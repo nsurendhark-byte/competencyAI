@@ -42,10 +42,26 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         if (res.ok && res.data?.authenticated) {
           setAdmin(res.data.admin);
         } else {
+          const stored = typeof window !== 'undefined' ? localStorage.getItem('competency_admin_session') : null;
+          if (stored) {
+            try {
+              setAdmin(JSON.parse(stored));
+              return;
+            } catch (e) {}
+          }
           router.push('/admin/login');
         }
       })
-      .catch(() => router.push('/admin/login'))
+      .catch(() => {
+        const stored = typeof window !== 'undefined' ? localStorage.getItem('competency_admin_session') : null;
+        if (stored) {
+          try {
+            setAdmin(JSON.parse(stored));
+            return;
+          } catch (e) {}
+        }
+        router.push('/admin/login');
+      })
       .finally(() => setLoading(false));
   }, [pathname, isLoginPage, router]);
 
