@@ -1,4 +1,5 @@
 import { readDB, writeDB, DBStore } from './db';
+import { questionsData } from './questions-data';
 import crypto from 'crypto';
 
 // Simple PBKDF2 password hashing helper
@@ -115,9 +116,57 @@ export function ensureSeededData() {
 
   // 4. Seed Baseline 100-Question Assessment Suite (Requirement 17)
   if (!db.questions || db.questions.length < 100) {
-    const { seedAssessment } = require('../scripts/seed-assessment');
-    seedAssessment();
-    db = readDB();
+    db.questions = [];
+    db.questionOptions = [];
+    db.assessments = [];
+    db.assessmentQuestions = [];
+
+    questionsData.forEach((q, idx) => {
+      db.questions.push({
+        id: q.id,
+        skillId: `skill-${q.subject.toLowerCase().replace(/[^a-z0-9]/g, '')}`,
+        levelNumber: q.levelNumber,
+        type: q.type,
+        title: q.title,
+        prompt: q.prompt,
+        explanation: q.explanation,
+        codeSnippet: q.codeSnippet,
+        difficulty: q.difficulty,
+        subject: q.subject,
+        topic: q.topic,
+        status: 'PUBLISHED',
+        createdAt: new Date().toISOString()
+      });
+
+      q.options.forEach((opt, optIdx) => {
+        db.questionOptions.push({
+          id: `opt-${q.id}-${optIdx + 1}`,
+          questionId: q.id,
+          optionText: opt.text,
+          isCorrect: opt.isCorrect
+        });
+      });
+    });
+
+    db.assessments.push({
+      id: 'assessment-baseline-100',
+      title: 'B.Tech IT Competency Diagnostic (100 Questions)',
+      description: 'Comprehensive 10-level diagnostic evaluating technical readiness across 100 curated domain questions.',
+      totalQuestions: 100,
+      status: 'PUBLISHED',
+      createdAt: new Date().toISOString()
+    });
+
+    db.questions.forEach((q, idx) => {
+      db.assessmentQuestions.push({
+        id: `aq-${idx + 1}`,
+        assessmentId: 'assessment-baseline-100',
+        questionId: q.id,
+        orderIndex: idx + 1
+      });
+    });
+
+    writeDB(db);
   }
 
   // 5. Seed Courses & Lessons
