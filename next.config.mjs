@@ -1,8 +1,12 @@
 /** @type {import('next').NextConfig} */
+const isExport = process.env.NODE_ENV === 'production' || process.env.GITHUB_ACTIONS === 'true';
+
 const nextConfig = {
   reactStrictMode: true,
-  output: 'export',
-  basePath: '/competencyAI',
+  ...(isExport ? {
+    output: 'export',
+    basePath: '/competencyAI',
+  } : {}),
   images: {
     unoptimized: true,
   },

@@ -35,16 +35,18 @@ export async function safeFetch(url: string, options?: RequestInit) {
   try {
     let fetchUrl = url;
     if (typeof window !== 'undefined' && url.startsWith('/api/')) {
-      const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '/competencyAI';
-      if (window.location.pathname.startsWith(basePath) && !url.startsWith(basePath)) {
+      const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
+      if (basePath && window.location.pathname.startsWith(basePath) && !url.startsWith(basePath)) {
         fetchUrl = `${basePath}${url}`;
+      } else if (!basePath && window.location.pathname.startsWith('/competencyAI') && !url.startsWith('/competencyAI')) {
+        fetchUrl = `/competencyAI${url}`;
       }
     }
 
     let res = await fetch(fetchUrl, options);
     let contentType = res.headers.get('content-type') || '';
 
-    // If initial fetch with basePath failed with 404/405, attempt fallback to un-prefixed URL or vice versa
+    // If fetch with basePath failed, attempt fallback to un-prefixed URL or vice versa
     if ((!res.ok || !contentType.includes('application/json')) && fetchUrl !== url) {
       try {
         const fallbackRes = await fetch(url, options);
@@ -56,8 +58,7 @@ export async function safeFetch(url: string, options?: RequestInit) {
       } catch (e) {}
     } else if ((!res.ok || !contentType.includes('application/json')) && fetchUrl === url && url.startsWith('/api/')) {
       try {
-        const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '/competencyAI';
-        const prefixedUrl = `${basePath}${url}`;
+        const prefixedUrl = `/competencyAI${url}`;
         const fallbackRes = await fetch(prefixedUrl, options);
         const fallbackType = fallbackRes.headers.get('content-type') || '';
         if (fallbackRes.ok && fallbackType.includes('application/json')) {
