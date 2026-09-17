@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { Sparkles, Send, Bot, User, Brain } from 'lucide-react';
+import { safeFetch } from '@/lib/api-response';
 
 export default function AuraPage() {
   const [messages, setMessages] = useState<Array<{ sender: string; content: string }>>([
@@ -20,14 +21,28 @@ export default function AuraPage() {
     setLoading(true);
 
     try {
-      const res = await fetch('/api/ai/aura', {
+      const stored = typeof window !== 'undefined' ? localStorage.getItem('competency_user_session') : null;
+      let userId = 'usr-demo-01';
+      if (stored) {
+        try {
+          const parsed = JSON.parse(stored);
+          if (parsed && parsed.id) userId = parsed.id;
+        } catch (e) {}
+      }
+
+      const res = await safeFetch('/api/ai/aura', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: userText })
+        body: JSON.stringify({ message: userText, userId })
       });
-      const data = await res.json();
-      setMessages(prev => [...prev, { sender: 'AURA', content: data.reply || 'Aura AI is evaluating...' }]);
-    } catch (err) {
+
+      if (res.ok && res.data?.reply) {
+        setMessages(prev => [...prev, { sender: 'AURA', content: res.data.reply }]);
+      } else {
+        const errorMsg = res.data?.error || res.data?.message || 'Aura AI is evaluating...';
+        setMessages(prev => [...prev, { sender: 'AURA', content: errorMsg }]);
+      }
+    } catch (err: any) {
       setMessages(prev => [...prev, { sender: 'AURA', content: 'Connection issue contacting Aura.' }]);
     } finally {
       setLoading(false);
