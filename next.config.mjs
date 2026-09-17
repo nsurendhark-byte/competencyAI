@@ -1,5 +1,5 @@
 /** @type {import('next').NextConfig} */
-const isExport = process.env.NODE_ENV === 'production' || process.env.GITHUB_ACTIONS === 'true';
+const isExport = process.env.GITHUB_ACTIONS === 'true' || process.env.NEXT_PUBLIC_IS_EXPORT === 'true';
 
 const nextConfig = {
   reactStrictMode: true,
