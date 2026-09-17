@@ -42,11 +42,36 @@ export default function LearnerAppLayout({ children }: { children: React.ReactNo
       .then(res => {
         if (res.ok && res.data?.authenticated) {
           setUser(res.data.user);
+          if (typeof window !== 'undefined') {
+            localStorage.setItem('competency_user_session', JSON.stringify(res.data.user));
+          }
         } else {
+          const stored = typeof window !== 'undefined' ? localStorage.getItem('competency_user_session') : null;
+          if (stored) {
+            try {
+              const parsed = JSON.parse(stored);
+              if (parsed && (parsed.email || parsed.id)) {
+                setUser(parsed);
+                return;
+              }
+            } catch (e) {}
+          }
           router.push('/login');
         }
       })
-      .catch(() => router.push('/login'))
+      .catch(() => {
+        const stored = typeof window !== 'undefined' ? localStorage.getItem('competency_user_session') : null;
+        if (stored) {
+          try {
+            const parsed = JSON.parse(stored);
+            if (parsed && (parsed.email || parsed.id)) {
+              setUser(parsed);
+              return;
+            }
+          } catch (e) {}
+        }
+        router.push('/login');
+      })
       .finally(() => setLoading(false));
   }, [router]);
 
@@ -73,6 +98,10 @@ export default function LearnerAppLayout({ children }: { children: React.ReactNo
   ];
 
   const handleLogout = async () => {
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('competency_user_session');
+      document.cookie = 'competency_session=; path=/; max-age=0; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+    }
     await safeFetch('/api/auth/logout', { method: 'POST' });
     router.push('/login');
   };

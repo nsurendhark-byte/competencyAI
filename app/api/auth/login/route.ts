@@ -38,9 +38,12 @@ export async function POST(req: Request) {
       isVerified: user.isVerified
     });
 
+    const isHttps = req.headers.get('x-forwarded-proto') === 'https';
+
     const response = NextResponse.json({
       success: true,
       message: 'Login successful',
+      token,
       user: {
         id: user.id,
         email: user.email,
@@ -55,7 +58,7 @@ export async function POST(req: Request) {
     // Set secure HTTP-only cookie
     response.cookies.set('competency_session', token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      secure: isHttps,
       sameSite: 'lax',
       maxAge: 60 * 60 * 24 * 7,
       path: '/'

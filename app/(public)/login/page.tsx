@@ -30,6 +30,9 @@ export default function LoginPage() {
       if (res.ok) {
         if (typeof window !== 'undefined') {
           localStorage.setItem('competency_user_session', JSON.stringify(res.data.user || { identifier }));
+          if (res.data?.token) {
+            document.cookie = `competency_session=${res.data.token}; path=/; max-age=604800`;
+          }
         }
         router.push(res.data.redirectTo || '/app/dashboard');
         return;
