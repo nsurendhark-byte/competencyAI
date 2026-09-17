@@ -29,7 +29,7 @@
   "adminUsers": [
     {
       "id": "admin-super-01",
-      "email": "admin@competencyai.com",
+      "email": "admin",
       "passwordHash": "dc2e21d0f3c8d281f9b7b13b83e14feb0b51d60cc77cc79cac1f6723c634903adf12a65d83e44226db6aaa7f646992b7ce365ca2f48682057551e4c9a6de9ef5",
       "fullName": "CompetencyAI Lead Administrator",
       "role": "SUPER_ADMIN",

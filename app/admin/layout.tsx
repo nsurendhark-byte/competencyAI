@@ -109,7 +109,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </div>
 
         <div className="px-4 py-2 bg-slate-950 border-b border-slate-800 text-[11px] font-mono text-slate-400 flex items-center justify-between">
-          <span className="truncate">{admin?.email || 'ADMIN SESSION'}</span>
+          <span className="truncate">{admin?.email === 'admin' || admin?.email?.includes('@') ? 'admin' : (admin?.email || 'admin')}</span>
           <span className="px-1.5 py-0.5 rounded bg-emerald-950 text-emerald-400 text-[9px]">SUPER</span>
         </div>
 

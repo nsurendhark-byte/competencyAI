@@ -39,11 +39,12 @@ export default function AdminLoginPage() {
 
       // Fallback for static HTML export (e.g., GitHub Pages or static dev preview) where POST to /api returns 405/404
       if (res.status === 405 || res.status === 404 || res.data?.error?.includes('non-JSON')) {
-        if (email.toLowerCase().trim() === 'admin@competencyai.com' && password === 'miniprojectsathy') {
+        const inputVal = email.toLowerCase().trim();
+        if ((inputVal === 'admin' || inputVal === 'admin@competencyai.com' || inputVal === 'adminssp.it@gmail.com') && password === 'miniprojectsathy') {
           if (typeof window !== 'undefined') {
             const adminSession = {
               id: 'admin-super-01',
-              email: 'admin@competencyai.com',
+              email: 'admin',
               fullName: 'CompetencyAI Lead Administrator',
               role: 'ADMIN'
             };
@@ -85,15 +86,15 @@ export default function AdminLoginPage() {
 
         <form onSubmit={handleSubmit} className="space-y-4 font-mono text-xs">
           <div>
-            <label className="block text-slate-400 mb-1">ADMINISTRATOR EMAIL</label>
+            <label className="block text-slate-400 mb-1">ADMINISTRATOR USERNAME</label>
             <div className="relative">
               <Mail className="w-4 h-4 absolute left-3 top-3 text-slate-500" />
               <input
-                type="email"
+                type="text"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="admin@competencyai.com"
+                placeholder="admin"
                 className="w-full bg-slate-950 border border-slate-700 rounded-lg pl-9 pr-3 py-2 text-white focus:outline-none focus:border-cyan-500"
               />
             </div>

@@ -63,11 +63,12 @@ function seedDatabase() {
     } catch (e) {}
   }
 
-  // 1. Seed Initial Admin User (admin@competencyai.com)
-  if (!db.adminUsers.some(a => a.email === 'admin@competencyai.com')) {
+  // 1. Seed Initial Admin User (admin)
+  let adminUser = db.adminUsers.find(a => a.id === 'admin-super-01' || a.email === 'admin' || a.email === 'adminssp.it@gmail.com');
+  if (!adminUser) {
     db.adminUsers.push({
       id: 'admin-super-01',
-      email: 'admin@competencyai.com',
+      email: 'admin',
       passwordHash: hashPassword('miniprojectsathy'),
       fullName: 'CompetencyAI Lead Administrator',
       role: 'SUPER_ADMIN',
@@ -75,6 +76,8 @@ function seedDatabase() {
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
     });
+  } else {
+    adminUser.email = 'admin';
   }
 
   // 2. Seed Baseline Career Track
