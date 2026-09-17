@@ -16,11 +16,11 @@ export function ensureSeededData() {
   let db = readDB();
 
   // 1. Seed Initial Secure Admin if not present (Requirement 46)
-  const existingAdmin = db.adminUsers.find(a => a.email === 'adminssp.it@gmail.com');
+  const existingAdmin = db.adminUsers.find(a => a.email === 'admin@competencyai.com');
   if (!existingAdmin) {
     db.adminUsers.push({
       id: 'admin-super-01',
-      email: 'adminssp.it@gmail.com',
+      email: 'admin@competencyai.com',
       passwordHash: hashPassword('miniprojectsathy'),
       fullName: 'CompetencyAI Lead Administrator',
       role: 'SUPER_ADMIN',

@@ -5,7 +5,7 @@ import { LineChart, ShieldCheck, History, FileText } from 'lucide-react';
 
 export default function AdminAnalyticsPage() {
   const auditLogs = [
-    { id: 1, action: 'ADMIN_LOGIN', details: 'adminssp.it@gmail.com logged in successfully', date: '2026-08-11 15:50' },
+    { id: 1, action: 'ADMIN_LOGIN', details: 'admin@competencyai.com logged in successfully', date: '2026-08-11 15:50' },
     { id: 2, action: 'CONTENT_PUBLISH', details: 'Published Lesson: Understanding V8 Heap & Call Stack', date: '2026-08-11 16:02' },
     { id: 3, action: 'AI_CONTENT_GENERATE', details: 'Generated Draft Lesson: Async Promises', date: '2026-08-11 16:15' }
   ];

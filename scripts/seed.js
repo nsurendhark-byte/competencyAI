@@ -63,11 +63,11 @@ function seedDatabase() {
     } catch (e) {}
   }
 
-  // 1. Seed Initial Admin User (adminssp.it@gmail.com)
-  if (!db.adminUsers.some(a => a.email === 'adminssp.it@gmail.com')) {
+  // 1. Seed Initial Admin User (admin@competencyai.com)
+  if (!db.adminUsers.some(a => a.email === 'admin@competencyai.com')) {
     db.adminUsers.push({
       id: 'admin-super-01',
-      email: 'adminssp.it@gmail.com',
+      email: 'admin@competencyai.com',
       passwordHash: hashPassword('miniprojectsathy'),
       fullName: 'CompetencyAI Lead Administrator',
       role: 'SUPER_ADMIN',

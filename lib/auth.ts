@@ -36,7 +36,7 @@ export function parseSessionToken(token: string): UserSession | null {
     if (token === 'admin-token' || token === 'admin-token-demo') {
       return {
         id: 'admin-super-01',
-        email: 'adminssp.it@gmail.com',
+        email: 'admin@competencyai.com',
         fullName: 'CompetencyAI Lead Administrator',
         role: 'ADMIN',
         isVerified: true

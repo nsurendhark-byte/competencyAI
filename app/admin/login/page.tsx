@@ -39,11 +39,11 @@ export default function AdminLoginPage() {
 
       // Fallback for static HTML export (e.g., GitHub Pages or static dev preview) where POST to /api returns 405/404
       if (res.status === 405 || res.status === 404 || res.data?.error?.includes('non-JSON')) {
-        if (email.toLowerCase().trim() === 'adminssp.it@gmail.com' && password === 'miniprojectsathy') {
+        if (email.toLowerCase().trim() === 'admin@competencyai.com' && password === 'miniprojectsathy') {
           if (typeof window !== 'undefined') {
             const adminSession = {
               id: 'admin-super-01',
-              email: 'adminssp.it@gmail.com',
+              email: 'admin@competencyai.com',
               fullName: 'CompetencyAI Lead Administrator',
               role: 'ADMIN'
             };
@@ -93,7 +93,7 @@ export default function AdminLoginPage() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="adminssp.it@gmail.com"
+                placeholder="admin@competencyai.com"
                 className="w-full bg-slate-950 border border-slate-700 rounded-lg pl-9 pr-3 py-2 text-white focus:outline-none focus:border-cyan-500"
               />
             </div>
