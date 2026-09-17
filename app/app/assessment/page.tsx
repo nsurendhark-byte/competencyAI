@@ -114,6 +114,26 @@ export default function AssessmentPage() {
           <div className="border-t border-surfaceBorder pt-6 space-y-4">
             <h3 className="font-mono text-sm font-bold text-white flex items-center gap-2">
               <BarChart3 className="w-4 h-4 text-cyan-400" />
+              SUBJECT PERFORMANCE BREAKDOWN
+            </h3>
+
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              {Object.entries(resultData.subjectStats || {}).map(([subj, stat]: [string, any]) => {
+                const pct = Math.round((stat.correct / Math.max(stat.total, 1)) * 100);
+                return (
+                  <div key={subj} className="p-3 bg-slate-900 border border-slate-800 rounded-xl space-y-1">
+                    <div className="text-[10px] font-mono text-slate-400 truncate">{subj}</div>
+                    <div className="text-lg font-bold text-emerald-400 font-mono">{pct}%</div>
+                    <div className="text-[10px] text-slate-500 font-mono">{stat.correct}/{stat.total} Correct</div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          <div className="border-t border-surfaceBorder pt-6 space-y-4">
+            <h3 className="font-mono text-sm font-bold text-white flex items-center gap-2">
+              <BarChart3 className="w-4 h-4 text-cyan-400" />
               10-LEVEL PROFICIENCY BREAKDOWN
             </h3>
 
@@ -199,8 +219,18 @@ export default function AssessmentPage() {
       {/* Main Question Workspace */}
       <div className="bg-surface border border-surfaceBorder rounded-2xl p-6 sm:p-8 space-y-6">
         <div className="space-y-3">
-          <div className="inline-block px-2.5 py-1 bg-slate-900 border border-slate-800 rounded text-[10px] font-mono text-cyan-400">
-            TYPE: {currentQ?.type} • DIFFICULTY: {currentQ?.difficulty}
+          <div className="flex flex-wrap items-center gap-2 font-mono text-[10px]">
+            <span className="px-2.5 py-1 bg-cyan-950/80 border border-cyan-500/40 rounded text-cyan-400 font-bold uppercase">
+              {currentQ?.subject || 'GENERAL'}
+            </span>
+            <span className="px-2.5 py-1 bg-slate-900 border border-slate-800 rounded text-slate-300">
+              TYPE: {currentQ?.type ? String(currentQ.type).replace(/_/g, ' ') : 'CONCEPTUAL'} • DIFFICULTY: {currentQ?.difficulty || 'EASY'}
+            </span>
+            {currentQ?.topic && (
+              <span className="px-2.5 py-1 bg-slate-900/60 border border-slate-800 rounded text-slate-400">
+                TOPIC: {currentQ.topic}
+              </span>
+            )}
           </div>
           <h2 className="text-lg font-bold text-white leading-relaxed">{currentQ?.title}</h2>
           <p className="text-slate-300 text-sm">{currentQ?.prompt}</p>

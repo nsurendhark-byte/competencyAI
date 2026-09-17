@@ -17,6 +17,8 @@ export async function GET(req: Request) {
         id: q.id,
         levelNumber: q.levelNumber,
         skillId: q.skillId,
+        subject: q.subject || 'General',
+        topic: q.topic || 'Core Concepts',
         type: q.type,
         title: q.title,
         prompt: q.prompt,

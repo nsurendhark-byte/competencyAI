@@ -22,6 +22,16 @@ export async function POST(req: Request) {
     const levelStats: Record<number, { total: number; correct: number }> = {};
     for (let l = 1; l <= 10; l++) levelStats[l] = { total: 0, correct: 0 };
 
+    const subjectStats: Record<string, { total: number; correct: number }> = {
+      'C': { total: 0, correct: 0 },
+      'C++': { total: 0, correct: 0 },
+      'Java': { total: 0, correct: 0 },
+      'HTML': { total: 0, correct: 0 },
+      'SQL': { total: 0, correct: 0 },
+      'JavaScript': { total: 0, correct: 0 },
+      'Full Stack': { total: 0, correct: 0 }
+    };
+
     const attemptId = 'att-' + crypto.randomUUID();
 
     // Evaluate answers
@@ -31,9 +41,14 @@ export async function POST(req: Request) {
         const correctOpt = db.questionOptions.find(o => o.questionId === qId && o.isCorrect);
         const isCorrect = correctOpt && correctOpt.id === optId;
 
+        const subj = q.subject || 'Full Stack';
+        if (!subjectStats[subj]) subjectStats[subj] = { total: 0, correct: 0 };
+        subjectStats[subj].total++;
+
         if (isCorrect) {
           correctCount++;
           if (levelStats[q.levelNumber]) levelStats[q.levelNumber].correct++;
+          subjectStats[subj].correct++;
         }
         if (levelStats[q.levelNumber]) levelStats[q.levelNumber].total++;
 
@@ -156,6 +171,7 @@ export async function POST(req: Request) {
       attemptId,
       overallScore,
       levelStats,
+      subjectStats,
       totalCorrect: correctCount,
       totalQuestions: totalAnswered
     });

@@ -160,53 +160,11 @@ function seedDatabase() {
   }
 
   // 4. Seed Baseline 100-Question Assessment Suite
-  if (db.questions.length === 0) {
-    let questionIndex = 1;
-    for (let level = 1; level <= 10; level++) {
-      for (let q = 1; q <= 10; q++) {
-        const qId = `q-100-${questionIndex}`;
-        const skillId = (q % 2 === 0) ? 'skill-js' : 'skill-react';
-        db.questions.push({
-          id: qId,
-          skillId,
-          levelNumber: level,
-          type: level % 2 === 1 ? 'MCQ' : 'CODE_OUTPUT',
-          title: `Level ${level} Assessment Q${q}: ${skillId === 'skill-js' ? 'JavaScript' : 'React'} Mastery`,
-          prompt: `[Level ${level} Core Competency] What is the expected runtime behavior of the following expression under strict execution context?`,
-          explanation: `At Level ${level}, execution context handling dictates how memory references are resolved.`,
-          codeSnippet: level > 3 ? `function executeStep() {\n  const ref = Level${level}State;\n  return typeof ref;\n}` : null,
-          difficulty: level <= 3 ? 'EASY' : level <= 7 ? 'MEDIUM' : 'HARD',
-          status: 'PUBLISHED',
-          createdAt: new Date().toISOString()
-        });
-
-        db.questionOptions.push(
-          { id: `opt-${qId}-1`, questionId: qId, optionText: `Standard evaluation matching Level ${level} specification`, isCorrect: true },
-          { id: `opt-${qId}-2`, questionId: qId, optionText: `Throws runtime TypeError due to uninitialized scope`, isCorrect: false },
-          { id: `opt-${qId}-3`, questionId: qId, optionText: `Returns undefined due to variable hoisting`, isCorrect: false },
-          { id: `opt-${qId}-4`, questionId: qId, optionText: `Creates memory leak on main looper thread`, isCorrect: false }
-        );
-        questionIndex++;
-      }
-    }
-
-    db.assessments.push({
-      id: 'assessment-baseline-100',
-      title: 'Full-Stack Competency Diagnostic (100 Questions)',
-      description: 'Comprehensive 10-level diagnostic evaluating technical readiness across 100 curated domain questions.',
-      totalQuestions: 100,
-      status: 'PUBLISHED',
-      createdAt: new Date().toISOString()
-    });
-
-    db.questions.forEach((q, idx) => {
-      db.assessmentQuestions.push({
-        id: `aq-${idx + 1}`,
-        assessmentId: 'assessment-baseline-100',
-        questionId: q.id,
-        orderIndex: idx + 1
-      });
-    });
+  if (!db.questions || db.questions.length < 100) {
+    const { seedAssessment } = require('./seed-assessment');
+    seedAssessment();
+    // re-read updated DB
+    db = JSON.parse(fs.readFileSync(DB_FILE, 'utf-8'));
   }
 
   // 5. Seed Coding Challenges
