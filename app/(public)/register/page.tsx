@@ -146,7 +146,7 @@ export default function RegisterPage() {
                   required
                   value={form.fullName}
                   onChange={(e) => setForm({ ...form, fullName: e.target.value })}
-                  placeholder="Jane Doe"
+                  placeholder="Enter full name"
                   className="w-full bg-slate-900 border border-slate-700 rounded-lg pl-9 pr-3 py-2 text-sm text-white focus:outline-none focus:border-cyan-500"
                 />
               </div>
@@ -161,7 +161,7 @@ export default function RegisterPage() {
                   required
                   value={form.email}
                   onChange={(e) => setForm({ ...form, email: e.target.value })}
-                  placeholder="jane@company.com"
+                  placeholder="Enter email address"
                   className="w-full bg-slate-900 border border-slate-700 rounded-lg pl-9 pr-3 py-2 text-sm text-white focus:outline-none focus:border-cyan-500"
                 />
               </div>
@@ -175,7 +175,7 @@ export default function RegisterPage() {
                   type="tel"
                   value={form.mobile}
                   onChange={(e) => setForm({ ...form, mobile: e.target.value })}
-                  placeholder="+1 (555) 000-0000"
+                  placeholder="Enter mobile number"
                   className="w-full bg-slate-900 border border-slate-700 rounded-lg pl-9 pr-3 py-2 text-sm text-white focus:outline-none focus:border-cyan-500"
                 />
               </div>
