@@ -18,7 +18,7 @@ export async function POST(req: Request) {
     const query = identifier.trim().toLowerCase();
 
     // Match Email or Mobile
-    const user = db.users.find(u => u.email.toLowerCase() === query || u.mobile === query);
+    const user = db.users.find((u: any) => u.email.toLowerCase() === query || u.mobile === query);
 
     if (!user) {
       return jsonError('Invalid credentials. User not found.', 401);
@@ -38,7 +38,7 @@ export async function POST(req: Request) {
       mobile: user.mobile
     }).catch(err => console.error('[Supabase Portal Sync Error]', err));
 
-    const profile = db.profiles.find(p => p.userId === user.id);
+    const profile = db.profiles.find((p: any) => p.userId === user.id);
 
 
     const token = createSessionToken({

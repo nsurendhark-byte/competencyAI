@@ -36,9 +36,9 @@ export async function POST(req: Request) {
 
     // Evaluate answers
     Object.entries(answers).forEach(([qId, optId]) => {
-      const q = db.questions.find(item => item.id === qId);
+      const q = db.questions.find((item: any) => item.id === qId);
       if (q) {
-        const correctOpt = db.questionOptions.find(o => o.questionId === qId && o.isCorrect);
+        const correctOpt = db.questionOptions.find((o: any) => o.questionId === qId && o.isCorrect);
         const isCorrect = correctOpt && correctOpt.id === optId;
 
         const subj = q.subject || 'Full Stack';
@@ -80,8 +80,8 @@ export async function POST(req: Request) {
     });
 
     // Update Skill Masteries per skill
-    db.skills.forEach(skill => {
-      let masteryIdx = db.skillMasteries.findIndex(m => m.userId === userId && m.skillId === skill.id);
+    db.skills.forEach((skill: any) => {
+      let masteryIdx = db.skillMasteries.findIndex((m: any) => m.userId === userId && m.skillId === skill.id);
       const level10Proficiency = Math.min(10, Math.max(1, Math.floor(overallScore / 10)));
 
       if (masteryIdx >= 0) {
@@ -102,7 +102,7 @@ export async function POST(req: Request) {
     });
 
     // Update Career Readiness
-    let readinessIdx = db.careerReadiness.findIndex(cr => cr.userId === userId);
+    let readinessIdx = db.careerReadiness.findIndex((cr: any) => cr.userId === userId);
     const readinessData = {
       id: readinessIdx >= 0 ? db.careerReadiness[readinessIdx].id : 'cr-' + crypto.randomUUID(),
       userId,
@@ -119,7 +119,7 @@ export async function POST(req: Request) {
     else db.careerReadiness.push(readinessData);
 
     // Auto-generate initial roadmap if not present
-    if (!db.roadmaps.some(r => r.userId === userId)) {
+    if (!db.roadmaps.some((r: any) => r.userId === userId)) {
       const roadmapId = 'rm-' + crypto.randomUUID();
       db.roadmaps.push({
         id: roadmapId,
@@ -140,7 +140,7 @@ export async function POST(req: Request) {
         { week: 6, skill: 'System Design', title: 'Distributed Caching & Load Balancing' },
       ];
 
-      weeks.forEach(w => {
+      weeks.forEach((w: any) => {
         db.roadmapItems.push({
           id: 'rmi-' + crypto.randomUUID(),
           roadmapId,
@@ -155,7 +155,7 @@ export async function POST(req: Request) {
     }
 
     // Unlock Achievement if high score
-    if (!db.userAchievements.some(ua => ua.userId === userId && ua.achievementId === 'ach-1')) {
+    if (!db.userAchievements.some((ua: any) => ua.userId === userId && ua.achievementId === 'ach-1')) {
       db.userAchievements.push({
         id: 'ua-' + crypto.randomUUID(),
         userId,

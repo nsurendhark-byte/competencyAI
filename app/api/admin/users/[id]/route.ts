@@ -31,7 +31,7 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
     const body = await req.json();
     const db = readDB();
 
-    const userIndex = db.users.findIndex(u => u.id === userId);
+    const userIndex = db.users.findIndex((u: any) => u.id === userId);
     if (userIndex === -1) {
       return jsonError('User account not found', 404);
     }
@@ -66,15 +66,15 @@ export async function DELETE(req: Request, { params }: { params: { id: string } 
     const userId = params.id;
     const db = readDB();
 
-    const userIndex = db.users.findIndex(u => u.id === userId);
+    const userIndex = db.users.findIndex((u: any) => u.id === userId);
     if (userIndex === -1) {
       return jsonError('User account not found', 404);
     }
 
     // Remove user and user profile
     db.users.splice(userIndex, 1);
-    db.profiles = db.profiles.filter(p => p.userId !== userId);
-    db.assessmentAttempts = db.assessmentAttempts.filter(a => a.userId !== userId);
+    db.profiles = db.profiles.filter((p: any) => p.userId !== userId);
+    db.assessmentAttempts = db.assessmentAttempts.filter((a: any) => a.userId !== userId);
 
     writeDB(db);
 

@@ -20,23 +20,23 @@ export async function POST(req: Request) {
 
     const db = readDB();
     const userId = session?.id || body.userId || 'usr-demo-01';
-    const user = db.users.find(u => u.id === userId);
-    const profile = db.profiles.find(p => p.userId === userId);
-    const attempts = db.assessmentAttempts.filter(a => a.userId === userId);
+    const user = db.users.find((u: any) => u.id === userId);
+    const profile = db.profiles.find((p: any) => p.userId === userId);
+    const attempts = db.assessmentAttempts.filter((a: any) => a.userId === userId);
     const latestAttempt = attempts.length > 0 ? attempts[attempts.length - 1] : null;
-    const readiness = db.careerReadiness.find(cr => cr.userId === userId);
-    const masteries = db.skillMasteries.filter(sm => sm.userId === userId);
+    const readiness = db.careerReadiness.find((cr: any) => cr.userId === userId);
+    const masteries = db.skillMasteries.filter((sm: any) => sm.userId === userId);
 
     const userName = user?.fullName || session?.fullName || 'Learner';
     const readinessScore = readiness ? readiness.readinessPercent : (latestAttempt ? Math.round(latestAttempt.overallScore * 0.85) : 65);
 
     const masteredSkills = masteries
-      .filter(m => m.status === 'MASTERED' || m.masteryPercentage >= 70)
-      .map(m => m.skillId.replace('skill-', '').toUpperCase());
+      .filter((m: any) => m.status === 'MASTERED' || m.masteryPercentage >= 70)
+      .map((m: any) => m.skillId.replace('skill-', '').toUpperCase());
 
     const weakAreas = masteries
-      .filter(m => m.status === 'AVAILABLE' || m.masteryPercentage < 50)
-      .map(m => m.skillId.replace('skill-', '').toUpperCase());
+      .filter((m: any) => m.status === 'AVAILABLE' || m.masteryPercentage < 50)
+      .map((m: any) => m.skillId.replace('skill-', '').toUpperCase());
 
     if (weakAreas.length === 0) {
       weakAreas.push('Async Event Loop', 'SQL Indexing', 'System Design Optimization');
@@ -52,7 +52,7 @@ export async function POST(req: Request) {
     });
 
     // Save conversation log
-    let conv = db.aiConversations.find(c => c.userId === userId);
+    let conv = db.aiConversations.find((c: any) => c.userId === userId);
     if (!conv) {
       conv = {
         id: 'conv-' + crypto.randomUUID(),

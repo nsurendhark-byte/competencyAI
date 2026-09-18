@@ -22,7 +22,7 @@ export async function POST(req: Request) {
     }
 
     const db = readDB();
-    const challenge = db.codingChallenges.find(c => c.id === challengeId) || db.codingChallenges[0];
+    const challenge = db.codingChallenges.find((c: any) => c.id === challengeId) || db.codingChallenges[0];
 
     const testCases: TestCase[] = challenge ? JSON.parse(challenge.testCases) : [
       { input: '[2, 7, 11, 15], 9', expectedOutput: '[0, 1]' }

@@ -9,7 +9,7 @@ export async function POST(req: Request) {
     }
 
     const db = readDB();
-    const user = db.users.find(u => u.email.toLowerCase() === email.toLowerCase());
+    const user = db.users.find((u: any) => u.email.toLowerCase() === email.toLowerCase());
 
     if (!user) {
       return NextResponse.json({ error: 'User with this email does not exist.' }, { status: 404 });

@@ -36,12 +36,12 @@ export async function POST(req: Request) {
     const db = readDB();
 
     // Check existing email
-    if (db.users.some(u => u.email.toLowerCase() === email.toLowerCase())) {
+    if (db.users.some((u: any) => u.email.toLowerCase() === email.toLowerCase())) {
       return jsonError('Account with this email already exists.', 409);
     }
 
     // Check existing mobile
-    if (mobile && db.users.some(u => u.mobile === mobile)) {
+    if (mobile && db.users.some((u: any) => u.mobile === mobile)) {
       return jsonError('Account with this mobile number already exists.', 409);
     }
 

@@ -21,8 +21,8 @@ export async function GET(req: Request) {
     }
 
     const db = readDB();
-    const user = db.users.find(u => u.id === session.id);
-    const profile = db.profiles.find(p => p.userId === session.id);
+    const user = db.users.find((u: any) => u.id === session.id);
+    const profile = db.profiles.find((p: any) => p.userId === session.id);
 
     if (!user) {
       return jsonError('User account not found', 401, { authenticated: false });

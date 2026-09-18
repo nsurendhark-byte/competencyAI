@@ -13,10 +13,10 @@ export async function GET(req: Request) {
     const db = readDB();
 
     // Format all learner users
-    const users = db.users.map(u => {
-      const profile = db.profiles.find(p => p.userId === u.id);
-      const attempts = db.assessmentAttempts.filter(a => a.userId === u.id);
-      const readiness = db.careerReadiness.find(cr => cr.userId === u.id);
+    const users = db.users.map((u: any) => {
+      const profile = db.profiles.find((p: any) => p.userId === u.id);
+      const attempts = db.assessmentAttempts.filter((a: any) => a.userId === u.id);
+      const readiness = db.careerReadiness.find((cr: any) => cr.userId === u.id);
       const latestAttempt = attempts.length > 0 ? attempts[attempts.length - 1] : null;
 
       return {

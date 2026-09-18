@@ -15,7 +15,7 @@ export async function POST(req: Request) {
 
     const { targetCareerId, weeklyHoursTarget } = await req.json();
     const db = readDB();
-    let profile = db.profiles.find(p => p.userId === session.id);
+    let profile = db.profiles.find((p: any) => p.userId === session.id);
 
     if (profile) {
       profile.targetCareerId = targetCareerId || 'career-fs-01';

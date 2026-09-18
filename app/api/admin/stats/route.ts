@@ -14,15 +14,15 @@ export async function GET(req: Request) {
 
     const stats = {
       totalUsers: db.users.length,
-      verifiedUsers: db.users.filter(u => u.isVerified).length,
+      verifiedUsers: db.users.filter((u: any) => u.isVerified).length,
       activeUsers: db.users.length,
       assessmentAttempts: db.assessmentAttempts.length,
       codingSubmissions: db.codingSubmissions.length,
       practiceAttempts: db.practiceAttempts.length,
       issueReports: db.issueReports.length,
       aiConversations: db.aiConversations.length,
-      publishedLessons: db.lessons.filter(l => l.status === 'PUBLISHED').length,
-      publishedQuestions: db.questions.filter(q => q.status === 'PUBLISHED').length
+      publishedLessons: db.lessons.filter((l: any) => l.status === 'PUBLISHED').length,
+      publishedQuestions: db.questions.filter((q: any) => q.status === 'PUBLISHED').length
     };
 
     return jsonSuccess({ stats, issues: db.issueReports });

@@ -43,8 +43,8 @@
       "bio": null,
       "avatarUrl": null,
       "targetCareerId": "career-fs-01",
-      "weeklyHoursTarget": 10,
-      "onboardingCompleted": false,
+      "weeklyHoursTarget": 5,
+      "onboardingCompleted": true,
       "createdAt": "2026-09-18T03:46:36.416Z",
       "updatedAt": "2026-09-18T03:46:36.416Z"
     }

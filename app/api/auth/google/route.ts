@@ -20,7 +20,7 @@ export async function POST(req: Request) {
     const db = readDB();
 
     // Check whether user already exists
-    let user = db.users.find(u => u.email.toLowerCase() === cleanEmail);
+    let user = db.users.find((u: any) => u.email.toLowerCase() === cleanEmail);
     let isNewUser = false;
 
     if (!user) {
@@ -74,7 +74,7 @@ export async function POST(req: Request) {
       role: user.role
     }).catch(err => console.error('[Supabase Google Login Sync Error]', err));
 
-    const profile = db.profiles.find(p => p.userId === user.id);
+    const profile = db.profiles.find((p: any) => p.userId === user.id);
 
 
     const token = createSessionToken({

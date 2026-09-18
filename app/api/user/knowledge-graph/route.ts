@@ -16,11 +16,11 @@ export async function GET(req: Request) {
     const db = readDB();
     const userId = session.id;
 
-    const userMasteries = db.skillMasteries.filter(sm => sm.userId === userId);
+    const userMasteries = db.skillMasteries.filter((sm: any) => sm.userId === userId);
 
-    const nodes = db.skills.map(s => {
-      const mastery = userMasteries.find(m => m.skillId === s.id);
-      const prereqs = db.skillDependencies.filter(d => d.skillId === s.id).map(d => d.prerequisiteId);
+    const nodes = db.skills.map((s: any) => {
+      const mastery = userMasteries.find((m: any) => m.skillId === s.id);
+      const prereqs = db.skillDependencies.filter((d: any) => d.skillId === s.id).map((d: any) => d.prerequisiteId);
 
       return {
         id: s.id,

@@ -1,10 +1,9 @@
 import fs from 'fs';
 import path from 'path';
 
-// Production database path
-const DB_FILE = path.join(process.cwd(), 'competency_db.json');
+const PRIMARY_DB_FILE = path.join(process.cwd(), 'competency_db.json');
+const VERCEL_TMP_DB_FILE = path.join('/tmp', 'competency_db.json');
 
-// Interface definition for local embedded DB state
 export interface DBStore {
   users: any[];
   profiles: any[];
@@ -95,14 +94,27 @@ function getInitialStore(): DBStore {
   };
 }
 
+function getDbFilePath(): string {
+  if (process.env.VERCEL) {
+    if (fs.existsSync(VERCEL_TMP_DB_FILE)) return VERCEL_TMP_DB_FILE;
+    if (fs.existsSync(PRIMARY_DB_FILE)) return PRIMARY_DB_FILE;
+    return VERCEL_TMP_DB_FILE;
+  }
+  return PRIMARY_DB_FILE;
+}
+
 export function readDB(): DBStore {
   try {
-    if (!fs.existsSync(DB_FILE)) {
+    const targetFile = getDbFilePath();
+    if (!fs.existsSync(targetFile)) {
+      if (fs.existsSync(PRIMARY_DB_FILE)) {
+        const raw = fs.readFileSync(PRIMARY_DB_FILE, 'utf-8');
+        return JSON.parse(raw);
+      }
       const initial = getInitialStore();
-      fs.writeFileSync(DB_FILE, JSON.stringify(initial, null, 2), 'utf-8');
       return initial;
     }
-    const raw = fs.readFileSync(DB_FILE, 'utf-8');
+    const raw = fs.readFileSync(targetFile, 'utf-8');
     return JSON.parse(raw);
   } catch (err) {
     console.error('Error reading DB file:', err);
@@ -112,8 +124,13 @@ export function readDB(): DBStore {
 
 export function writeDB(store: DBStore): void {
   try {
-    fs.writeFileSync(DB_FILE, JSON.stringify(store, null, 2), 'utf-8');
+    const targetFile = process.env.VERCEL ? VERCEL_TMP_DB_FILE : PRIMARY_DB_FILE;
+    fs.writeFileSync(targetFile, JSON.stringify(store, null, 2), 'utf-8');
   } catch (err) {
-    console.error('Error writing DB file:', err);
+    try {
+      fs.writeFileSync(VERCEL_TMP_DB_FILE, JSON.stringify(store, null, 2), 'utf-8');
+    } catch (fallbackErr) {
+      console.error('Error writing DB file fallback:', fallbackErr);
+    }
   }
 }

@@ -15,7 +15,7 @@ export async function POST(req: Request) {
     }
 
     const db = readDB();
-    const admin = db.adminUsers.find(a => a.email.toLowerCase() === email.toLowerCase().trim());
+    const admin = db.adminUsers.find((a: any) => a.email.toLowerCase() === email.toLowerCase().trim());
 
     if (!admin) {
       return jsonError('Invalid administrator credentials.', 401);

@@ -12,7 +12,7 @@ export async function GET(req: Request) {
     const userId = session?.id || 'usr-demo-01';
 
     const db = readDB();
-    const attempts = db.assessmentAttempts.filter(a => a.userId === userId);
+    const attempts = db.assessmentAttempts.filter((a: any) => a.userId === userId);
     const score = attempts.length > 0 ? attempts[attempts.length - 1].overallScore : 65;
 
     const analysis = await generateAiCompetencyGapAnalysis(

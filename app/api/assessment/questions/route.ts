@@ -8,10 +8,10 @@ export async function GET(req: Request) {
     const db = readDB();
 
     // Fetch baseline 100 questions ordered by level (1 to 10)
-    const questions = db.questions.map(q => {
+    const questions = db.questions.map((q: any) => {
       const options = db.questionOptions
-        .filter(o => o.questionId === q.id)
-        .map(o => ({ id: o.id, optionText: o.optionText }));
+        .filter((o: any) => o.questionId === q.id)
+        .map((o: any) => ({ id: o.id, optionText: o.optionText }));
 
       return {
         id: q.id,

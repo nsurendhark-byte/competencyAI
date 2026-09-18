@@ -17,23 +17,23 @@ export async function GET(req: Request) {
     const userId = session.id;
 
     // Real database queries for user activity
-    const attempts = db.assessmentAttempts.filter(a => a.userId === userId && a.status === 'COMPLETED');
-    const masteries = db.skillMasteries.filter(m => m.userId === userId);
-    const codingSubs = db.codingSubmissions.filter(c => c.userId === userId);
-    const practiceAtts = db.practiceAttempts.filter(p => p.userId === userId);
-    const userAch = db.userAchievements.filter(ua => ua.userId === userId);
-    const readiness = db.careerReadiness.find(cr => cr.userId === userId);
-    const activeRoadmap = db.roadmaps.find(r => r.userId === userId && r.status === 'ACTIVE');
+    const attempts = db.assessmentAttempts.filter((a: any) => a.userId === userId && a.status === 'COMPLETED');
+    const masteries = db.skillMasteries.filter((m: any) => m.userId === userId);
+    const codingSubs = db.codingSubmissions.filter((c: any) => c.userId === userId);
+    const practiceAtts = db.practiceAttempts.filter((p: any) => p.userId === userId);
+    const userAch = db.userAchievements.filter((ua: any) => ua.userId === userId);
+    const readiness = db.careerReadiness.find((cr: any) => cr.userId === userId);
+    const activeRoadmap = db.roadmaps.find((r: any) => r.userId === userId && r.status === 'ACTIVE');
 
     const latestAttempt = attempts.length > 0 ? attempts[attempts.length - 1] : null;
 
     const stats = {
       assessmentCompleted: attempts.length > 0,
       overallScore: latestAttempt ? latestAttempt.overallScore : 0,
-      skillsMasteredCount: masteries.filter(m => m.status === 'MASTERED' || m.status === 'VERIFIED').length,
+      skillsMasteredCount: masteries.filter((m: any) => m.status === 'MASTERED' || m.status === 'VERIFIED').length,
       totalSkillsCount: db.skills.length,
       codingSubmissionsCount: codingSubs.length,
-      codingPassedCount: codingSubs.filter(c => c.status === 'PASSED').length,
+      codingPassedCount: codingSubs.filter((c: any) => c.status === 'PASSED').length,
       practiceAttemptsCount: practiceAtts.length,
       achievementsCount: userAch.length,
       readinessPercent: readiness ? readiness.readinessPercent : 0,
