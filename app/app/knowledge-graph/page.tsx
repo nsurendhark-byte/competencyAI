@@ -1,142 +1,259 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
-import { Network, Lock, CheckCircle2, PlayCircle, ShieldCheck, BookOpen, Code2, ArrowRight } from 'lucide-react';
+import { Network, Lock, CheckCircle2, PlayCircle, ShieldCheck, BookOpen, Code2, Search, ZoomIn, ZoomOut, RotateCcw, ArrowRight } from 'lucide-react';
 
 export default function KnowledgeGraphPage() {
-  const [nodes, setNodes] = useState<any[]>([]);
-  const [selectedNode, setSelectedNode] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+  const initialNodes = [
+    {
+      id: "node-1",
+      name: "HTML5 & Semantic Layouts",
+      category: "Frontend Fundamentals",
+      status: "MASTERED",
+      levelMastered: 8,
+      masteryPercentage: 92,
+      score: 92,
+      description: "Semantic page structure, accessibility standards, SEO tags, and DOM tree hierarchy.",
+      prerequisites: ["Web Basics"],
+      dependentSkills: ["CSS3 Flexbox/Grid", "DOM Manipulation"],
+      resources: ["MDN Semantic HTML Guide", "W3C Accessibility Standards"]
+    },
+    {
+      id: "node-2",
+      name: "CSS3 & Modern Responsive Layouts",
+      category: "Frontend Fundamentals",
+      status: "VERIFIED",
+      levelMastered: 9,
+      masteryPercentage: 95,
+      score: 95,
+      description: "Flexbox, CSS Grid, custom properties, responsive breakpoints, and animations.",
+      prerequisites: ["HTML5 & Semantic Layouts"],
+      dependentSkills: ["Tailwind CSS", "React Component UI"],
+      resources: ["CSS Tricks Grid Complete Guide", "Flexbox Froggy Practice"]
+    },
+    {
+      id: "node-3",
+      name: "JavaScript Async & Execution Context",
+      category: "Core Language Engine",
+      status: "IN_PROGRESS",
+      levelMastered: 6,
+      masteryPercentage: 68,
+      score: 68,
+      description: "Call stack, event loop, promises, async/await, closures, and V8 heap management.",
+      prerequisites: ["JS ES6 Fundamentals"],
+      dependentSkills: ["React State Architecture", "Express Middleware"],
+      resources: ["JavaScript Info Async Guide", "V8 Engine Internals Video Track"]
+    },
+    {
+      id: "node-4",
+      name: "React State & Lifecycle Engines",
+      category: "Frontend Frameworks",
+      status: "AVAILABLE",
+      levelMastered: 4,
+      masteryPercentage: 45,
+      score: 45,
+      description: "Virtual DOM reconciliation, state machines, custom hooks, and context propagation.",
+      prerequisites: ["JavaScript Async & Execution Context"],
+      dependentSkills: ["Next.js App Router", "Redux State Engine"],
+      resources: ["Official React Docs", "Advanced Custom Hook Patterns"]
+    },
+    {
+      id: "node-5",
+      name: "Node.js Microservices & Express Pipeline",
+      category: "Backend Engineering",
+      status: "LOCKED",
+      levelMastered: 0,
+      masteryPercentage: 0,
+      score: 0,
+      description: "RESTful architecture, JWT security, middleware chains, and stream pipelines.",
+      prerequisites: ["JavaScript Async & Execution Context"],
+      dependentSkills: ["PostgreSQL & Prisma ORM", "Docker Deployment"],
+      resources: ["Node.js Security Best Practices", "Express API Architecture"]
+    }
+  ];
 
-  useEffect(() => {
-    fetch('/api/user/knowledge-graph')
-      .then(res => res.json())
-      .then(data => {
-        setNodes(data.nodes || []);
-        if (data.nodes?.length > 0) setSelectedNode(data.nodes[0]);
-      })
-      .catch(console.error)
-      .finally(() => setLoading(false));
-  }, []);
-
-  if (loading) {
-    return (
-      <div className="py-16 text-center text-xs font-mono text-cyan-400">
-        INITIALIZING KNOWLEDGE GRAPH DAG INTERACTION...
-      </div>
-    );
-  }
+  const [nodes] = useState(initialNodes);
+  const [selectedNode, setSelectedNode] = useState(initialNodes[2]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("ALL");
 
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'MASTERED':
+        return <span className="px-2.5 py-0.5 rounded-full bg-[#00E6A7]/10 text-[#00E6A7] border border-[#00E6A7]/30 text-[10px] font-bold">MASTERED</span>;
       case 'VERIFIED':
-        return <span className="px-2 py-0.5 rounded bg-emerald-950 border border-emerald-700 text-emerald-400 font-mono text-[10px]">VERIFIED (100%)</span>;
+        return <span className="px-2.5 py-0.5 rounded-full bg-[#3B82F6]/10 text-[#3B82F6] border border-[#3B82F6]/30 text-[10px] font-bold">VERIFIED</span>;
       case 'IN_PROGRESS':
-        return <span className="px-2 py-0.5 rounded bg-cyan-950 border border-cyan-700 text-cyan-400 font-mono text-[10px]">IN PROGRESS</span>;
+        return <span className="px-2.5 py-0.5 rounded-full bg-[#5B3DF5]/20 text-[#22D3EE] border border-[#5B3DF5]/40 text-[10px] font-bold">IN PROGRESS</span>;
       case 'LOCKED':
-        return <span className="px-2 py-0.5 rounded bg-rose-950 border border-rose-800 text-rose-400 font-mono text-[10px]">LOCKED</span>;
+        return <span className="px-2.5 py-0.5 rounded-full bg-[#050A19] text-[#64748B] border border-[#26314A] text-[10px] font-bold">LOCKED</span>;
       default:
-        return <span className="px-2 py-0.5 rounded bg-slate-900 border border-slate-700 text-slate-400 font-mono text-[10px]">AVAILABLE</span>;
+        return <span className="px-2.5 py-0.5 rounded-full bg-[#11182B] text-[#F8FAFC] border border-[#26314A] text-[10px] font-bold">AVAILABLE</span>;
     }
   };
 
+  const filteredNodes = nodes.filter(node => {
+    const matchesSearch = node.name.toLowerCase().includes(searchTerm.toLowerCase()) || node.category.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesStatus = statusFilter === "ALL" || node.status === statusFilter;
+    return matchesSearch && matchesStatus;
+  });
+
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-surface border border-surfaceBorder p-6 rounded-2xl">
-        <div>
-          <div className="font-mono text-xs text-cyan-400 mb-1">INTERACTIVE SKILL DAG</div>
-          <h1 className="text-2xl font-bold text-white tracking-tight">Competency Knowledge Graph</h1>
-          <p className="text-xs text-slate-400 mt-1">Prerequisite navigation graph driven by assessment & code execution proof.</p>
+    <div className="space-y-6 font-sans">
+      {/* HEADER BANNER */}
+      <div className="bg-[#11182B] border border-[#26314A] rounded-2xl p-6 sm:p-8 space-y-2 shadow-xl">
+        <div className="flex items-center gap-2">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#050A19] border border-[#3B82F6]/30 text-[#22D3EE] text-xs font-semibold tracking-wider">
+            <Network className="w-3.5 h-3.5 text-[#22D3EE]" />
+            PREREQUISITE DEPENDENCY GRAPH
+          </span>
+        </div>
+        <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+          Knowledge Graph
+        </h1>
+        <p className="text-xs sm:text-sm text-[#94A3B8] max-w-3xl leading-relaxed">
+          Explore prerequisite topic chains, skill dependencies, and topic unlock paths. Master foundational concepts before advancing to higher-order architecture.
+        </p>
+      </div>
+
+      {/* SEARCH, CONTROLS & LEGEND TOOLBAR */}
+      <div className="bg-[#11182B] border border-[#26314A] rounded-2xl p-4 flex flex-col md:flex-row items-center justify-between gap-4">
+        <div className="flex items-center gap-3 w-full md:w-auto">
+          <div className="relative w-full md:w-64">
+            <Search className="w-4 h-4 text-[#64748B] absolute left-3 top-1/2 -translate-y-1/2" />
+            <input
+              type="text"
+              placeholder="Search skill nodes..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full bg-[#050A19] border border-[#26314A] rounded-xl pl-9 pr-3 py-2 text-xs text-white placeholder-[#64748B] focus:outline-none focus:border-[#5B3DF5]"
+            />
+          </div>
+
+          <select
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            className="bg-[#050A19] border border-[#26314A] rounded-xl px-3 py-2 text-xs text-[#94A3B8] focus:outline-none focus:border-[#5B3DF5]"
+          >
+            <option value="ALL">All States</option>
+            <option value="MASTERED">Mastered</option>
+            <option value="VERIFIED">Verified</option>
+            <option value="IN_PROGRESS">In Progress</option>
+            <option value="AVAILABLE">Available</option>
+            <option value="LOCKED">Locked</option>
+          </select>
+        </div>
+
+        {/* Legend */}
+        <div className="flex items-center gap-3 text-[11px] font-semibold text-[#94A3B8] overflow-x-auto w-full md:w-auto">
+          <span className="flex items-center gap-1.5"><div className="w-2.5 h-2.5 rounded-full bg-[#00E6A7]" /> Mastered</span>
+          <span className="flex items-center gap-1.5"><div className="w-2.5 h-2.5 rounded-full bg-[#3B82F6]" /> Verified</span>
+          <span className="flex items-center gap-1.5"><div className="w-2.5 h-2.5 rounded-full bg-[#5B3DF5]" /> In Progress</span>
+          <span className="flex items-center gap-1.5"><div className="w-2.5 h-2.5 rounded-full bg-[#64748B]" /> Locked</span>
         </div>
       </div>
 
+      {/* MAIN GRAPH CANVAS & SIDE DETAILS PANEL */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Interactive Visual Graph Canvas Representation */}
-        <div className="lg:col-span-2 bg-surface border border-surfaceBorder rounded-2xl p-6 space-y-6 min-h-[420px] relative flex flex-col justify-between glow-cyan">
-          <div className="flex items-center justify-between border-b border-surfaceBorder pb-3">
-            <span className="font-mono text-xs text-slate-400">GRAPH CANVAS • 5 ACTIVE DOMAIN NODES</span>
-            <div className="flex items-center gap-3 text-[10px] font-mono">
-              <span className="flex items-center gap-1 text-emerald-400"><div className="w-2 h-2 rounded-full bg-emerald-400" /> MASTERED</span>
-              <span className="flex items-center gap-1 text-cyan-400"><div className="w-2 h-2 rounded-full bg-cyan-400" /> ACTIVE</span>
-              <span className="flex items-center gap-1 text-slate-500"><div className="w-2 h-2 rounded-full bg-slate-500" /> LOCKED</span>
+        {/* GRAPH CANVAS / NODES GRID */}
+        <div className="lg:col-span-2 bg-[#11182B] border border-[#26314A] rounded-2xl p-6 space-y-4">
+          <div className="flex items-center justify-between border-b border-[#26314A] pb-3">
+            <span className="text-xs font-bold text-[#64748B] uppercase tracking-wider">
+              FULL STACK COMPETENCY GRAPH ({filteredNodes.length} NODES)
+            </span>
+            <div className="flex items-center gap-1 text-[#94A3B8]">
+              <button className="p-1.5 bg-[#050A19] border border-[#26314A] rounded-lg hover:text-white"><ZoomIn className="w-3.5 h-3.5" /></button>
+              <button className="p-1.5 bg-[#050A19] border border-[#26314A] rounded-lg hover:text-white"><ZoomOut className="w-3.5 h-3.5" /></button>
+              <button className="p-1.5 bg-[#050A19] border border-[#26314A] rounded-lg hover:text-white"><RotateCcw className="w-3.5 h-3.5" /></button>
             </div>
           </div>
 
-          {/* Node Grid Map */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 py-4">
-            {nodes.map((node) => {
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 py-2">
+            {filteredNodes.map((node) => {
               const isSelected = selectedNode?.id === node.id;
               return (
                 <button
                   key={node.id}
                   onClick={() => setSelectedNode(node)}
-                  className={`p-5 rounded-xl border text-left transition-all relative ${
+                  className={`p-5 rounded-2xl border text-left transition-all space-y-3 relative ${
                     isSelected
-                      ? 'bg-cyan-950/70 border-cyan-500 text-white ring-2 ring-cyan-500/40 shadow-lg'
-                      : 'bg-slate-900/80 border-slate-800 text-slate-300 hover:border-slate-700'
+                      ? "bg-[#050A19] border-[#5B3DF5] shadow-xl shadow-[#5B3DF5]/20 ring-1 ring-[#5B3DF5]"
+                      : "bg-[#050A19] border-[#26314A] hover:border-[#3B82F6]"
                   }`}
                 >
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="font-mono text-[10px] text-slate-500">{node.category}</span>
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-bold text-[#64748B] uppercase tracking-wider">{node.category}</span>
                     {getStatusBadge(node.status)}
                   </div>
-                  <div className="font-bold text-sm text-white mb-1">{node.name}</div>
-                  <div className="text-xs text-slate-400 line-clamp-2">{node.description}</div>
 
-                  <div className="mt-3 pt-2 border-t border-slate-800/80 flex items-center justify-between text-[10px] font-mono text-cyan-400">
-                    <span>LEVEL {node.levelMastered} / 10</span>
-                    <span>{node.masteryPercentage}%</span>
+                  <div>
+                    <h3 className="font-bold text-white text-base">{node.name}</h3>
+                    <p className="text-xs text-[#94A3B8] line-clamp-2 mt-1">{node.description}</p>
+                  </div>
+
+                  <div className="pt-2 border-t border-[#26314A] flex items-center justify-between text-xs">
+                    <span className="text-[#64748B] font-medium">Proficiency</span>
+                    <span className="font-bold text-[#22D3EE]">{node.masteryPercentage}%</span>
                   </div>
                 </button>
               );
             })}
           </div>
-
-          <div className="p-3 bg-slate-900 border border-slate-800 rounded-lg text-xs text-slate-400 font-mono">
-            SELECT A NODE TO INSPECT PREREQUISITE DEPENDENCIES AND STUDY RESOURCES.
-          </div>
         </div>
 
-        {/* Selected Node Details Sheet */}
+        {/* SELECTED NODE DETAILS SHEET */}
         {selectedNode && (
-          <div className="bg-surface border border-surfaceBorder rounded-2xl p-6 space-y-6">
-            <div className="space-y-2 border-b border-surfaceBorder pb-4">
+          <div className="bg-[#11182B] border border-[#26314A] rounded-2xl p-6 space-y-6 shadow-xl">
+            <div className="space-y-3 border-b border-[#26314A] pb-5">
               <div className="flex items-center justify-between">
-                <span className="font-mono text-xs text-cyan-400">{selectedNode.category}</span>
+                <span className="text-[10px] font-bold text-[#64748B] uppercase tracking-wider">{selectedNode.category}</span>
                 {getStatusBadge(selectedNode.status)}
               </div>
               <h2 className="text-xl font-bold text-white">{selectedNode.name}</h2>
-              <p className="text-xs text-slate-300">{selectedNode.description}</p>
+              <p className="text-xs text-[#94A3B8] leading-relaxed">{selectedNode.description}</p>
             </div>
 
-            <div className="space-y-3 font-mono text-xs">
-              <div className="p-3 bg-slate-900 rounded-lg border border-slate-800 space-y-1">
-                <div className="text-slate-400">CURRENT PROFICIENCY:</div>
-                <div className="text-lg font-bold text-cyan-400">Level {selectedNode.levelMastered} of 10</div>
+            <div className="space-y-3 text-xs">
+              <div className="bg-[#050A19] border border-[#26314A] p-4 rounded-xl space-y-1">
+                <div className="text-[10px] font-bold text-[#64748B] uppercase tracking-wider">ASSESSMENT SCORE & PROFICIENCY</div>
+                <div className="text-lg font-bold text-white">{selectedNode.score}% <span className="text-xs font-normal text-[#94A3B8]">(Level {selectedNode.levelMastered}/10)</span></div>
               </div>
 
-              <div className="p-3 bg-slate-900 rounded-lg border border-slate-800 space-y-1">
-                <div className="text-slate-400">PREREQUISITE NODES:</div>
-                <div className="text-slate-200">
-                  {selectedNode.prerequisites?.length > 0 ? selectedNode.prerequisites.join(', ') : 'None (Baseline Node)'}
+              <div className="bg-[#050A19] border border-[#26314A] p-4 rounded-xl space-y-1">
+                <div className="text-[10px] font-bold text-[#22D3EE] uppercase tracking-wider">PREREQUISITES</div>
+                <div className="text-white font-medium">
+                  {selectedNode.prerequisites?.length > 0 ? selectedNode.prerequisites.join(", ") : "None (Baseline Skill)"}
                 </div>
               </div>
+
+              <div className="bg-[#050A19] border border-[#26314A] p-4 rounded-xl space-y-1">
+                <div className="text-[10px] font-bold text-[#20D9C2] uppercase tracking-wider">DEPENDENT UNLOCK PATHS</div>
+                <div className="text-white font-medium">
+                  {selectedNode.dependentSkills?.length > 0 ? selectedNode.dependentSkills.join(", ") : "Terminal Node"}
+                </div>
+              </div>
+
+              <div className="bg-[#050A19] border border-[#26314A] p-4 rounded-xl space-y-2">
+                <div className="text-[10px] font-bold text-[#64748B] uppercase tracking-wider">RECOMMENDED RESOURCES</div>
+                <ul className="space-y-1.5">
+                  {selectedNode.resources?.map((res, i) => (
+                    <li key={i} className="text-xs text-[#22D3EE] flex items-center gap-1.5 hover:underline cursor-pointer">
+                      <BookOpen className="w-3.5 h-3.5 shrink-0" />
+                      <span>{res}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
 
-            <div className="space-y-2">
+            <div className="space-y-2 pt-2">
               <Link
                 href="/app/learning"
-                className="w-full py-2.5 bg-cyan-500 text-slate-950 font-bold text-xs font-mono rounded-lg hover:brightness-110 flex items-center justify-center gap-2"
+                className="w-full py-3 bg-[#5B3DF5] hover:bg-[#633BFF] text-white font-semibold text-xs rounded-xl shadow-lg shadow-[#5B3DF5]/30 transition-all flex items-center justify-center gap-2"
               >
-                <BookOpen className="w-4 h-4" /> STUDY MATERIAL
-              </Link>
-              <Link
-                href="/app/coding"
-                className="w-full py-2.5 bg-slate-900 border border-slate-700 text-slate-200 font-bold text-xs font-mono rounded-lg hover:border-cyan-500 flex items-center justify-center gap-2"
-              >
-                <Code2 className="w-4 h-4" /> CODING ARENA
+                <span>Study Topic Now</span>
+                <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
           </div>
@@ -145,3 +262,4 @@ export default function KnowledgeGraphPage() {
     </div>
   );
 }
+
