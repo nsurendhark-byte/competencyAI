@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { readDB, writeDB } from '@/lib/db';
 import { hashPassword, ensureSeededData } from '@/lib/seed-data';
 import { jsonSuccess, jsonError } from '@/lib/api-response';
+import { syncUserCredentialsToSupabase } from '@/lib/supabase';
 import crypto from 'crypto';
 
 export async function POST(req: Request) {
@@ -78,7 +79,18 @@ export async function POST(req: Request) {
 
     writeDB(db);
 
+    // Sync credentials to Supabase backend
+    syncUserCredentialsToSupabase({
+      id: userId,
+      email: email.toLowerCase(),
+      password,
+      fullName,
+      role: 'LEARNER',
+      mobile: mobile || null
+    }).catch(err => console.error('[Supabase Register Sync Error]', err));
+
     return jsonSuccess(
+
       {
         userId,
         email: newUser.email,

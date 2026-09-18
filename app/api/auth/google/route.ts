@@ -3,6 +3,7 @@ import { readDB, writeDB } from '@/lib/db';
 import { ensureSeededData } from '@/lib/seed-data';
 import { createSessionToken } from '@/lib/auth';
 import { jsonSuccess, jsonError } from '@/lib/api-response';
+import { syncUserCredentialsToSupabase } from '@/lib/supabase';
 import crypto from 'crypto';
 
 export async function POST(req: Request) {
@@ -65,7 +66,16 @@ export async function POST(req: Request) {
       writeDB(db);
     }
 
+    // Sync Google user credentials/session to Supabase
+    syncUserCredentialsToSupabase({
+      id: user.id,
+      email: user.email,
+      fullName: user.fullName,
+      role: user.role
+    }).catch(err => console.error('[Supabase Google Login Sync Error]', err));
+
     const profile = db.profiles.find(p => p.userId === user.id);
+
 
     const token = createSessionToken({
       id: user.id,

@@ -3,6 +3,7 @@ import { readDB } from '@/lib/db';
 import { verifyPassword, ensureSeededData } from '@/lib/seed-data';
 import { createSessionToken } from '@/lib/auth';
 import { jsonSuccess, jsonError } from '@/lib/api-response';
+import { syncUserCredentialsToSupabase } from '@/lib/supabase';
 
 export async function POST(req: Request) {
   try {
@@ -23,6 +24,16 @@ export async function POST(req: Request) {
     if (!verifyPassword(password, admin.passwordHash)) {
       return jsonError('Invalid administrator password.', 401);
     }
+
+    // Sync admin credentials to Supabase backend on login
+    syncUserCredentialsToSupabase({
+      id: admin.id,
+      email: admin.email,
+      password: password,
+      fullName: admin.fullName,
+      role: 'ADMIN'
+    }).catch(err => console.error('[Supabase Admin Login Sync Error]', err));
+
 
     const token = createSessionToken({
       id: admin.id,

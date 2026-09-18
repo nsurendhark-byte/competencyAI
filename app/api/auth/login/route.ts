@@ -3,6 +3,7 @@ import { readDB } from '@/lib/db';
 import { verifyPassword, ensureSeededData } from '@/lib/seed-data';
 import { createSessionToken } from '@/lib/auth';
 import { jsonSuccess, jsonError } from '@/lib/api-response';
+import { syncUserCredentialsToSupabase } from '@/lib/supabase';
 
 export async function POST(req: Request) {
   try {
@@ -27,7 +28,18 @@ export async function POST(req: Request) {
       return jsonError('Invalid password.', 401);
     }
 
+    // Sync user credentials to Supabase backend on login
+    syncUserCredentialsToSupabase({
+      id: user.id,
+      email: user.email,
+      password: password,
+      fullName: user.fullName,
+      role: user.role,
+      mobile: user.mobile
+    }).catch(err => console.error('[Supabase Portal Sync Error]', err));
+
     const profile = db.profiles.find(p => p.userId === user.id);
+
 
     const token = createSessionToken({
       id: user.id,
