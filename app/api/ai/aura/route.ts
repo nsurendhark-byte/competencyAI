@@ -42,17 +42,25 @@ export async function POST(req: Request) {
       weakAreas.push('Async Event Loop', 'SQL Indexing', 'System Design Optimization');
     }
 
+    // Get previous messages from DB for context retention
+    let conv = db.aiConversations.find((c: any) => c.userId === userId);
+    let history = Array.isArray(body.history) ? body.history : [];
+
+    if (conv && history.length === 0) {
+      const pastMessages = db.aiMessages.filter((m: any) => m.conversationId === conv.id);
+      history = pastMessages.map((m: any) => ({ sender: m.sender, content: m.content }));
+    }
+
     const reply = await askAuraMentor(message, {
       userName,
       career: 'Full-Stack Software Engineer',
       readinessScore,
       currentSkill: 'Full-Stack Vector',
       weakAreas,
-      masteredSkills
+      masteredSkills,
+      history
     });
 
-    // Save conversation log
-    let conv = db.aiConversations.find((c: any) => c.userId === userId);
     if (!conv) {
       conv = {
         id: 'conv-' + crypto.randomUUID(),

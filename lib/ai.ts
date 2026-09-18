@@ -13,9 +13,9 @@ async function callOpenRouter(messages: ChatMessage[], responseFormatJson = fals
   if (!apiKey) return null;
 
   const modelsToTry = [
-    'openrouter/auto',
-    'google/gemini-2.0-flash-001',
     'meta-llama/llama-3.3-70b-instruct',
+    'deepseek/deepseek-chat',
+    'openrouter/auto',
     'openai/gpt-4o-mini'
   ];
 
@@ -120,6 +120,7 @@ export async function askAuraMentor(
     lessonTitle?: string;
     weakAreas?: string[];
     masteredSkills?: string[];
+    history?: Array<{ sender: string; content: string }>;
   }
 ): Promise<string> {
   const userName = context.userName || 'Learner';
@@ -146,12 +147,28 @@ Instructions:
    - Provide clean, modern code snippets when helpful.
    - Highlight common pitfalls and best practices.
 3. Use the learner's competency context naturally when relevant to their target career (${career}).
-4. Maintain a professional, encouraging, and sharp technical tone. Keep formatting crisp with markdown code blocks and bullet points.`;
+4. Maintain a professional, encouraging, dynamic conversational tone. Respond uniquely to every query with fresh insights.`;
 
   const messages: ChatMessage[] = [
-    { role: 'system', content: systemInstruction },
-    { role: 'user', content: userMessage }
+    { role: 'system', content: systemInstruction }
   ];
+
+  // Include past conversation history for full context retention
+  if (context.history && Array.isArray(context.history)) {
+    context.history.slice(-8).forEach(h => {
+      if (h.content && h.content.trim()) {
+        messages.push({
+          role: h.sender === 'USER' ? 'user' : 'assistant',
+          content: h.content.trim()
+        });
+      }
+    });
+  }
+
+  // Add latest user message if not already trailing in history
+  if (messages.length === 0 || messages[messages.length - 1].content !== userMessage.trim()) {
+    messages.push({ role: 'user', content: userMessage.trim() });
+  }
 
   const aiReply = await callOpenRouter(messages);
   if (aiReply) {

@@ -6371,8 +6371,30 @@
       "unlockedAt": "2026-08-12T04:12:26.899Z"
     }
   ],
-  "aiConversations": [],
-  "aiMessages": [],
+  "aiConversations": [
+    {
+      "id": "conv-beb58066-c9d9-4d6c-9e94-90e523e3ca32",
+      "userId": "usr-2267a44b-5994-474f-bf78-540b5637b846",
+      "topic": "Aura Mentor",
+      "createdAt": "2026-09-18T08:08:59.304Z"
+    }
+  ],
+  "aiMessages": [
+    {
+      "id": "msg-28e0ae1e-9946-4389-9b2b-a1ff6ac8f796",
+      "conversationId": "conv-beb58066-c9d9-4d6c-9e94-90e523e3ca32",
+      "sender": "USER",
+      "content": "hi",
+      "createdAt": "2026-09-18T08:08:59.304Z"
+    },
+    {
+      "id": "msg-dbea6e87-9261-41de-bd67-d7a2e537b9a6",
+      "conversationId": "conv-beb58066-c9d9-4d6c-9e94-90e523e3ca32",
+      "sender": "AURA",
+      "content": "Hi Surendhar! Welcome. I’m AURA, your contextual AI career mentor here at COMPETENCYAI. \n\nI see you’re targeting a **Full-Stack Software Engineer** role and sitting at **65% assessment readiness**. That’s solid foundational ground—we have clear momentum to build on.\n\nLooking at your profile, your target improvement areas are exactly the high-leverage topics that separate junior from mid-level engineers in interviews and on the job:\n- **Async Event Loop** (the core of Node.js performance)\n- **SQL Indexing** (critical for scaling backends)\n- **System Design Optimization** (the key to acing the loop).\n\nI also see you’re actively focused on **Full-Stack Vector** skills right now. \n\nTo make the most of our time today, let me ask: \n1. Do you want to tackle a specific concept from those focus areas?\n2. Or are you working on a coding/debugging problem right now that I can help you think through?\n\nWhatever it is, we’ll break it down clearly, cover best practices, and make sure you’re sharp for your next interview. Let’s get to work.",
+      "createdAt": "2026-09-18T08:08:59.304Z"
+    }
+  ],
   "interviewSessions": [],
   "interviewResults": [],
   "issueReports": [],

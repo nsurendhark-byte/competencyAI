@@ -33,7 +33,7 @@ export default function AuraPage() {
       const res = await safeFetch('/api/ai/aura', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: userText, userId })
+        body: JSON.stringify({ message: userText, userId, history: messages })
       });
 
       if (res.ok && res.data?.reply) {
