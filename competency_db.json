@@ -11,6 +11,18 @@
       "verificationToken": "75e6a8b87dc07b9b67889fa832c13a72b20356a2a45c5f75173a2a5959a97833",
       "createdAt": "2026-08-12T04:12:26.841Z",
       "updatedAt": "2026-08-12T04:12:26.841Z"
+    },
+    {
+      "id": "usr-2267a44b-5994-474f-bf78-540b5637b846",
+      "email": "nsurendhark@gmail.com",
+      "mobile": "9025322177",
+      "passwordHash": "8d9b178a3519efbd4d5bfece1e964bc60b4a63e4821b500301341a52381fb18535704850d4936a1f6988bba30d810407e61d98956d3b02a4b3608c5b6d742480",
+      "fullName": "SURENDHAR KUMAR",
+      "role": "LEARNER",
+      "isVerified": true,
+      "verificationToken": "b0efdab54c15addeb8e0f34f384efd0ff18038f65c5e284c443f408ff3637bb1",
+      "createdAt": "2026-09-18T03:46:36.416Z",
+      "updatedAt": "2026-09-18T03:46:36.416Z"
     }
   ],
   "profiles": [
@@ -24,6 +36,17 @@
       "onboardingCompleted": false,
       "createdAt": "2026-08-12T04:12:26.841Z",
       "updatedAt": "2026-08-12T04:12:26.841Z"
+    },
+    {
+      "id": "prof-79c1461a-6864-4ad2-ab42-d56d0dc14cab",
+      "userId": "usr-2267a44b-5994-474f-bf78-540b5637b846",
+      "bio": null,
+      "avatarUrl": null,
+      "targetCareerId": "career-fs-01",
+      "weeklyHoursTarget": 10,
+      "onboardingCompleted": false,
+      "createdAt": "2026-09-18T03:46:36.416Z",
+      "updatedAt": "2026-09-18T03:46:36.416Z"
     }
   ],
   "adminUsers": [
