@@ -12,7 +12,8 @@ import {
   Sparkles,
   BarChart3,
   Target,
-  ArrowRight
+  ArrowRight,
+  Code2
 } from 'lucide-react';
 
 import { safeFetch } from '@/lib/api-response';
@@ -116,7 +117,7 @@ export default function AssessmentPage() {
       if (levelStats[q.levelNumber]) levelStats[q.levelNumber].total++;
     });
 
-    const totalAnswered = Object.keys(answers).length || 100;
+    const totalAnswered = Object.keys(answers).length || questions.length || 10;
     const overallScore = Math.round((correctCount / Math.max(totalAnswered, 1)) * 100);
 
     return {
@@ -151,9 +152,13 @@ export default function AssessmentPage() {
 
   if (loading) {
     return (
-      <div className="py-20 text-center space-y-4 font-sans">
-        <Brain className="w-10 h-10 text-[#22D3EE] animate-pulse mx-auto" />
-        <div className="text-xs font-semibold text-[#94A3B8] tracking-wide">Loading Competency Evaluation Matrix...</div>
+      <div className="py-24 text-center space-y-4 font-sans">
+        <div className="w-12 h-12 bg-[#11182B] border border-[#26314A] rounded-2xl mx-auto flex items-center justify-center text-[#22D3EE] animate-pulse">
+          <Brain className="w-6 h-6" />
+        </div>
+        <div className="text-xs font-semibold text-[#94A3B8] tracking-wide">
+          Loading Competency Evaluation Matrix...
+        </div>
       </div>
     );
   }
@@ -161,9 +166,13 @@ export default function AssessmentPage() {
   if (submitting && !resultData) {
     return (
       <div className="py-24 text-center space-y-6 max-w-md mx-auto font-sans">
-        <Sparkles className="w-12 h-12 text-[#5B3DF5] animate-spin mx-auto" />
-        <h2 className="text-2xl font-bold text-white tracking-tight">Analyzing Competencies...</h2>
-        <p className="text-xs text-[#94A3B8]">Evaluating level vectors & mapping skill gap prerequisites...</p>
+        <div className="w-14 h-14 bg-[#11182B] border border-[#5B3DF5] rounded-2xl mx-auto flex items-center justify-center text-[#5B3DF5] animate-spin">
+          <Sparkles className="w-7 h-7" />
+        </div>
+        <h2 className="text-2xl font-extrabold text-white tracking-tight">Analyzing Competencies...</h2>
+        <p className="text-xs text-[#94A3B8] leading-relaxed">
+          Evaluating skill vectors & mapping prerequisite nodes in real-time...
+        </p>
       </div>
     );
   }
@@ -172,8 +181,8 @@ export default function AssessmentPage() {
     return (
       <div className="max-w-4xl mx-auto space-y-6 py-4 font-sans">
         <div className="bg-[#11182B] border border-[#26314A] rounded-2xl p-8 space-y-6 shadow-xl">
-          <div className="text-center space-y-2">
-            <div className="w-20 h-20 bg-[#050A19] border border-[#5B3DF5] rounded-2xl mx-auto flex items-center justify-center text-[#22D3EE] text-3xl font-extrabold shadow-lg shadow-[#5B3DF5]/20">
+          <div className="text-center space-y-3">
+            <div className="w-24 h-24 bg-[#050A19] border-2 border-[#5B3DF5] rounded-2xl mx-auto flex items-center justify-center text-[#22D3EE] text-3xl font-extrabold shadow-lg shadow-[#5B3DF5]/30">
               {resultData.overallScore}%
             </div>
             <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">Assessment Completed</h1>
@@ -194,7 +203,7 @@ export default function AssessmentPage() {
                 return (
                   <div key={subj} className="p-4 bg-[#050A19] border border-[#26314A] rounded-xl space-y-1">
                     <div className="text-[10px] font-bold text-[#64748B] uppercase tracking-wider">{subj}</div>
-                    <div className="text-xl font-bold text-[#00E6A7]">{pct}%</div>
+                    <div className="text-xl font-extrabold text-[#00E6A7]">{pct}%</div>
                     <div className="text-[10px] text-[#94A3B8]">{stat.correct}/{stat.total} Correct</div>
                   </div>
                 );
@@ -205,7 +214,7 @@ export default function AssessmentPage() {
           <div className="flex flex-col sm:flex-row gap-4 pt-4">
             <button
               onClick={() => router.push('/app/knowledge-graph')}
-              className="flex-1 py-3 bg-[#11182B] border border-[#26314A] hover:border-[#5B3DF5] text-white font-semibold text-xs rounded-xl transition-all"
+              className="flex-1 py-3 bg-[#050A19] border border-[#26314A] hover:border-[#5B3DF5] text-white font-semibold text-xs rounded-xl transition-all"
             >
               Inspect Knowledge Graph
             </button>
@@ -248,7 +257,7 @@ export default function AssessmentPage() {
           <div className="flex items-center gap-3 shrink-0">
             <button
               onClick={toggleFlag}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-medium transition-colors ${
+              className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl border text-xs font-semibold transition-colors ${
                 flagged[currentQ?.id]
                   ? 'bg-amber-950/40 border-amber-500/50 text-amber-400'
                   : 'bg-[#050A19] border-[#26314A] text-[#94A3B8] hover:text-white'
@@ -265,10 +274,10 @@ export default function AssessmentPage() {
           </div>
         </div>
 
-        {/* PROGRESS INFO */}
+        {/* PROGRESS BAR */}
         <div className="space-y-2 pt-2">
           <div className="flex items-center justify-between text-xs text-[#94A3B8]">
-            <span className="font-medium text-white">Question {currentIndex + 1} of {questions.length} · Type: MCQ</span>
+            <span className="font-semibold text-white">Question {currentIndex + 1} of {questions.length} · Type: MCQ</span>
             <span className="font-semibold text-[#22D3EE]">{progressPercent}% Complete</span>
           </div>
 
@@ -285,7 +294,7 @@ export default function AssessmentPage() {
       <div className="bg-[#11182B] border border-[#26314A] rounded-2xl p-6 sm:p-8 space-y-6 shadow-xl">
         <div className="space-y-3">
           <span className="inline-block px-3 py-1 bg-[#050A19] border border-[#3B82F6]/30 rounded-full text-[#22D3EE] text-[10px] font-bold uppercase tracking-wider">
-            {currentQ?.subject || 'HTML'} COMPETENCY
+            {currentQ?.subject || 'FULL STACK'} COMPETENCY
           </span>
 
           <h2 className="text-lg sm:text-xl font-bold text-white leading-relaxed">
@@ -294,7 +303,10 @@ export default function AssessmentPage() {
         </div>
 
         {currentQ?.codeSnippet && (
-          <div className="p-4 bg-[#050A19] border border-[#26314A] rounded-xl font-mono text-xs text-[#22D3EE] overflow-x-auto">
+          <div className="p-4 bg-[#050A19] border border-[#26314A] rounded-xl font-mono text-xs text-[#22D3EE] overflow-x-auto space-y-1">
+            <div className="text-[10px] text-[#64748B] flex items-center gap-1 mb-1">
+              <Code2 className="w-3 h-3 text-[#3B82F6]" /> CODE SNIPPET
+            </div>
             <pre>{currentQ.codeSnippet}</pre>
           </div>
         )}
@@ -310,13 +322,13 @@ export default function AssessmentPage() {
                 onClick={() => handleSelectOption(opt.id)}
                 className={`w-full text-left p-4 rounded-xl border text-sm transition-all flex items-center justify-between ${
                   isSelected
-                    ? "bg-[#050A19] border-[#5B3DF5] text-white font-semibold shadow-lg shadow-[#5B3DF5]/20 ring-1 ring-[#5B3DF5]"
-                    : "bg-[#050A19] border-[#26314A] text-[#94A3B8] hover:border-[#3B82F6] hover:text-white"
+                    ? 'bg-[#050A19] border-[#5B3DF5] text-white font-semibold shadow-lg shadow-[#5B3DF5]/20 ring-1 ring-[#5B3DF5]'
+                    : 'bg-[#050A19] border-[#26314A] text-[#94A3B8] hover:border-[#3B82F6] hover:text-white'
                 }`}
               >
                 <div className="flex items-center gap-3">
                   <span className={`w-7 h-7 rounded-lg flex items-center justify-center font-bold text-xs border ${
-                    isSelected ? "bg-[#5B3DF5] text-white border-[#633BFF]" : "bg-[#11182B] text-[#64748B] border-[#26314A]"
+                    isSelected ? 'bg-[#5B3DF5] text-white border-[#633BFF]' : 'bg-[#11182B] text-[#64748B] border-[#26314A]'
                   }`}>
                     {letter}
                   </span>
@@ -324,7 +336,7 @@ export default function AssessmentPage() {
                 </div>
 
                 <div className={`w-5 h-5 rounded-full border flex items-center justify-center ${
-                  isSelected ? "border-[#5B3DF5] bg-[#5B3DF5] text-white" : "border-[#26314A]"
+                  isSelected ? 'border-[#5B3DF5] bg-[#5B3DF5] text-white' : 'border-[#26314A]'
                 }`}>
                   {isSelected && <CheckCircle2 className="w-3.5 h-3.5" />}
                 </div>
@@ -339,12 +351,12 @@ export default function AssessmentPage() {
         <button
           disabled={currentIndex === 0}
           onClick={() => setCurrentIndex(prev => Math.max(0, prev - 1))}
-          className="px-4 py-2.5 bg-[#11182B] border border-[#26314A] text-xs font-medium text-[#94A3B8] hover:text-white rounded-xl disabled:opacity-40 flex items-center gap-1.5"
+          className="px-4 py-2.5 bg-[#11182B] border border-[#26314A] text-xs font-semibold text-[#94A3B8] hover:text-white rounded-xl disabled:opacity-40 flex items-center gap-1.5"
         >
           <ChevronLeft className="w-4 h-4" /> Previous
         </button>
 
-        <div className="text-xs text-[#64748B] font-medium">
+        <div className="text-xs text-[#64748B] font-semibold">
           Answered {Object.keys(answers).length} of {questions.length}
         </div>
 
@@ -368,4 +380,5 @@ export default function AssessmentPage() {
     </div>
   );
 }
+
 

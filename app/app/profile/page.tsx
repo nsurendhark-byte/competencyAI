@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { User, Mail, Building, GraduationCap, Compass, Clock, Save, Check } from 'lucide-react';
+import { User, Mail, Building, GraduationCap, Compass, Clock, Save, Check, Sparkles } from 'lucide-react';
 import { safeFetch } from '@/lib/api-response';
 
 export default function ProfilePage() {
@@ -34,14 +34,21 @@ export default function ProfilePage() {
   return (
     <div className="max-w-4xl mx-auto space-y-6 font-sans">
       {/* TOP PROFILE HEADER CARD */}
-      <div className="bg-[#11182B] border border-[#26314A] rounded-2xl p-6 sm:p-8 flex flex-col sm:flex-row items-center sm:items-start gap-6 shadow-xl">
-        <div className="w-20 h-20 rounded-full bg-[#5B3DF5] text-white flex items-center justify-center font-extrabold text-2xl shadow-lg shadow-[#5B3DF5]/30 shrink-0">
+      <div className="bg-[#11182B] border border-[#26314A] rounded-2xl p-6 sm:p-8 flex flex-col sm:flex-row items-center sm:items-start gap-6 shadow-xl relative overflow-hidden">
+        <div className="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 bg-[#5B3DF5]/10 rounded-full blur-3xl pointer-events-none" />
+
+        <div className="w-20 h-20 rounded-2xl bg-[#5B3DF5] text-white flex items-center justify-center font-extrabold text-2xl shadow-lg shadow-[#5B3DF5]/30 shrink-0">
           {fullName.charAt(0) || 'D'}
         </div>
 
-        <div className="space-y-1 text-center sm:text-left">
-          <h1 className="text-2xl font-extrabold text-white tracking-tight">{fullName}</h1>
-          <p className="text-xs text-[#22D3EE] font-medium">
+        <div className="space-y-1.5 text-center sm:text-left flex-1">
+          <div className="flex flex-col sm:flex-row items-center sm:items-start justify-between gap-2">
+            <h1 className="text-2xl font-extrabold text-white tracking-tight">{fullName}</h1>
+            <span className="px-3 py-1 rounded-full bg-[#050A19] border border-[#26314A] text-[#22D3EE] text-xs font-semibold">
+              Target: {targetCareer}
+            </span>
+          </div>
+          <p className="text-xs text-[#22D3EE] font-semibold">
             {college} • {department} (3rd Year)
           </p>
           <p className="text-xs text-[#94A3B8]">{email}</p>
@@ -50,7 +57,8 @@ export default function ProfilePage() {
 
       {/* EDIT PROFILE & PREFERENCES FORM */}
       <div className="bg-[#11182B] border border-[#26314A] rounded-2xl p-6 sm:p-8 space-y-6 shadow-xl">
-        <div className="border-b border-[#26314A] pb-4">
+        <div className="border-b border-[#26314A] pb-4 flex items-center gap-2">
+          <User className="w-4 h-4 text-[#3B82F6]" />
           <h2 className="text-xs font-bold text-[#64748B] uppercase tracking-wider">
             EDIT PROFILE & PREFERENCES
           </h2>
@@ -64,7 +72,7 @@ export default function ProfilePage() {
                 type="text"
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
-                className="w-full bg-[#050A19] border border-[#26314A] rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-[#5B3DF5]"
+                className="w-full bg-[#050A19] border border-[#26314A] rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-[#5B3DF5]"
               />
             </div>
 
@@ -74,7 +82,7 @@ export default function ProfilePage() {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full bg-[#050A19] border border-[#26314A] rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-[#5B3DF5]"
+                className="w-full bg-[#050A19] border border-[#26314A] rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-[#5B3DF5]"
               />
             </div>
 
@@ -84,7 +92,7 @@ export default function ProfilePage() {
                 type="text"
                 value={college}
                 onChange={(e) => setCollege(e.target.value)}
-                className="w-full bg-[#050A19] border border-[#26314A] rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-[#5B3DF5]"
+                className="w-full bg-[#050A19] border border-[#26314A] rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-[#5B3DF5]"
               />
             </div>
 
@@ -94,7 +102,7 @@ export default function ProfilePage() {
                 type="text"
                 value={department}
                 onChange={(e) => setDepartment(e.target.value)}
-                className="w-full bg-[#050A19] border border-[#26314A] rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-[#5B3DF5]"
+                className="w-full bg-[#050A19] border border-[#26314A] rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-[#5B3DF5]"
               />
             </div>
           </div>
@@ -105,7 +113,7 @@ export default function ProfilePage() {
               type="text"
               value={targetCareer}
               onChange={(e) => setTargetCareer(e.target.value)}
-              className="w-full bg-[#050A19] border border-[#26314A] rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-[#5B3DF5]"
+              className="w-full bg-[#050A19] border border-[#26314A] rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-[#5B3DF5]"
             />
           </div>
 
@@ -123,10 +131,10 @@ export default function ProfilePage() {
               step={5}
               value={weeklyHours}
               onChange={(e) => setWeeklyHours(Number(e.target.value))}
-              className="w-full accent-[#5B3DF5] bg-[#050A19] rounded-lg h-2 cursor-pointer"
+              className="w-full accent-[#5B3DF5] bg-[#050A19] rounded-lg h-2 cursor-pointer border border-[#26314A]"
             />
 
-            <div className="flex justify-between text-[10px] text-[#64748B] font-medium">
+            <div className="flex justify-between text-[10px] text-[#64748B] font-semibold">
               <span>5 hrs (Casual)</span>
               <span>15 hrs (Recommended)</span>
               <span>40 hrs (Intensive Boot Camp)</span>
@@ -147,4 +155,5 @@ export default function ProfilePage() {
     </div>
   );
 }
+
 

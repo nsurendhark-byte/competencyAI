@@ -45,34 +45,37 @@ export default function CodingArenaPage() {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-surface border border-surfaceBorder p-6 rounded-2xl">
-        <div>
-          <div className="font-mono text-xs text-cyan-400 mb-1">ISOLATED VM CODE SANDBOX</div>
-          <h1 className="text-2xl font-bold text-white tracking-tight">Coding Arena — Two Sum Challenge</h1>
-          <p className="text-xs text-slate-400 mt-1">Level 2 JavaScript & Algorithmic Array Processing.</p>
+    <div className="space-y-6 font-sans">
+      {/* HEADER BAR */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-[#11182B] border border-[#26314A] p-6 rounded-2xl shadow-xl">
+        <div className="space-y-1">
+          <span className="text-[10px] font-bold text-[#22D3EE] uppercase tracking-wider">
+            ISOLATED VM CODE SANDBOX
+          </span>
+          <h1 className="text-2xl font-extrabold text-white tracking-tight">Coding Arena — Two Sum Challenge</h1>
+          <p className="text-xs text-[#94A3B8]">Level 2 JavaScript & Algorithmic Array Processing.</p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3 shrink-0">
           <button
             onClick={handleGetHint}
-            className="px-3 py-2 bg-slate-900 border border-slate-700 text-cyan-400 text-xs font-mono rounded-lg hover:border-cyan-500 flex items-center gap-1.5"
+            className="px-3.5 py-2 bg-[#050A19] border border-[#26314A] text-[#22D3EE] text-xs font-semibold rounded-xl hover:border-[#5B3DF5] flex items-center gap-1.5 transition-colors"
           >
-            <HelpCircle className="w-4 h-4" /> GET HINT
+            <HelpCircle className="w-4 h-4 text-[#22D3EE]" /> <span>Get Hint</span>
           </button>
           <button
             onClick={handleRunCode}
             disabled={executing}
-            className="px-5 py-2 bg-gradient-to-r from-cyan-500 to-indigo-600 text-slate-950 font-mono font-bold text-xs rounded-lg hover:brightness-110 flex items-center gap-2 shadow-lg shadow-cyan-500/20 disabled:opacity-50"
+            className="px-5 py-2 bg-[#5B3DF5] hover:bg-[#633BFF] text-white font-semibold text-xs rounded-xl shadow-lg shadow-[#5B3DF5]/30 flex items-center gap-2 disabled:opacity-50 transition-all"
           >
-            <Play className="w-4 h-4" /> {executing ? 'EXECUTING IN VM...' : 'RUN TESTS'}
+            <Play className="w-4 h-4 fill-white" /> <span>{executing ? 'Executing VM...' : 'Run Tests'}</span>
           </button>
         </div>
       </div>
 
       {auraHint && (
-        <div className="p-4 bg-cyan-950/60 border border-cyan-500/50 rounded-xl font-mono text-xs text-cyan-200 flex items-start gap-2">
-          <Sparkles className="w-4 h-4 text-cyan-400 shrink-0 mt-0.5" />
+        <div className="p-4 bg-[#050A19] border border-[#22D3EE]/40 rounded-xl text-xs text-[#22D3EE] flex items-start gap-2 shadow-md">
+          <Sparkles className="w-4 h-4 text-[#22D3EE] shrink-0 mt-0.5" />
           <span>{auraHint}</span>
         </div>
       )}
@@ -80,42 +83,43 @@ export default function CodingArenaPage() {
       {/* Main Workspace Split */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Left: Problem & Constraints */}
-        <div className="bg-surface border border-surfaceBorder rounded-2xl p-6 space-y-6">
-          <div className="space-y-3">
+        <div className="bg-[#11182B] border border-[#26314A] rounded-2xl p-6 space-y-6 shadow-xl">
+          <div className="space-y-2 border-b border-[#26314A] pb-4">
+            <span className="text-[10px] font-bold text-[#64748B] uppercase tracking-wider">CHALLENGE SPECIFICATION</span>
             <h3 className="font-bold text-white text-lg">Problem Statement</h3>
-            <p className="text-slate-300 text-sm leading-relaxed">
-              Given an array of integers <code className="text-cyan-400">nums</code> and an integer <code className="text-cyan-400">target</code>, return indices of the two numbers such that they add up to target.
+            <p className="text-[#94A3B8] text-xs leading-relaxed">
+              Given an array of integers <code className="text-[#22D3EE] font-mono px-1 py-0.5 rounded bg-[#050A19]">nums</code> and an integer <code className="text-[#22D3EE] font-mono px-1 py-0.5 rounded bg-[#050A19]">target</code>, return indices of the two numbers such that they add up to target.
             </p>
           </div>
 
-          <div className="space-y-3 font-mono text-xs">
-            <div className="p-3 bg-slate-950 border border-slate-800 rounded-lg space-y-1">
-              <div className="text-slate-400">EXAMPLE 1:</div>
-              <div className="text-slate-200">Input: nums = [2, 7, 11, 15], target = 9</div>
-              <div className="text-cyan-400 font-bold">Output: [0, 1]</div>
+          <div className="space-y-3 text-xs">
+            <div className="p-4 bg-[#050A19] border border-[#26314A] rounded-xl space-y-1.5 font-mono">
+              <div className="text-[10px] text-[#64748B] font-bold">EXAMPLE 1:</div>
+              <div className="text-white">Input: nums = [2, 7, 11, 15], target = 9</div>
+              <div className="text-[#00E6A7] font-bold">Output: [0, 1]</div>
             </div>
 
-            <div className="p-3 bg-slate-950 border border-slate-800 rounded-lg space-y-1">
-              <div className="text-slate-400">CONSTRAINTS:</div>
-              <div className="text-slate-300">• 1 &lt;= nums.length &lt;= 10^4</div>
-              <div className="text-slate-300">• Target can be negative or positive</div>
-              <div className="text-slate-300">• Time complexity target: O(N)</div>
+            <div className="p-4 bg-[#050A19] border border-[#26314A] rounded-xl space-y-1.5 font-mono">
+              <div className="text-[10px] text-[#64748B] font-bold">CONSTRAINTS:</div>
+              <div className="text-[#94A3B8]">• 1 &lt;= nums.length &lt;= 10^4</div>
+              <div className="text-[#94A3B8]">• Target can be negative or positive</div>
+              <div className="text-[#94A3B8]">• Time complexity target: O(N)</div>
             </div>
           </div>
         </div>
 
         {/* Right: Code Editor & Console */}
-        <div className="bg-surface border border-surfaceBorder rounded-2xl p-6 space-y-4 flex flex-col justify-between">
-          <div className="space-y-2">
-            <div className="flex items-center justify-between border-b border-surfaceBorder pb-2">
-              <span className="font-mono text-xs text-slate-400 flex items-center gap-1.5">
-                <Code2 className="w-4 h-4 text-cyan-400" /> JavaScript (Node.js ES2022)
+        <div className="bg-[#11182B] border border-[#26314A] rounded-2xl p-6 space-y-4 flex flex-col justify-between shadow-xl">
+          <div className="space-y-3">
+            <div className="flex items-center justify-between border-b border-[#26314A] pb-3">
+              <span className="text-xs font-semibold text-white flex items-center gap-1.5">
+                <Code2 className="w-4 h-4 text-[#22D3EE]" /> JavaScript (Node.js ES2022)
               </span>
               <button
                 onClick={() => setCode(`function twoSum(nums, target) {\n  return [];\n}`)}
-                className="text-[10px] font-mono text-slate-500 hover:text-slate-300 flex items-center gap-1"
+                className="text-[11px] font-semibold text-[#64748B] hover:text-white flex items-center gap-1"
               >
-                <RotateCcw className="w-3 h-3" /> RESET CODE
+                <RotateCcw className="w-3 h-3" /> Reset Code
               </button>
             </div>
 
@@ -123,19 +127,19 @@ export default function CodingArenaPage() {
               value={code}
               onChange={(e) => setCode(e.target.value)}
               rows={12}
-              className="w-full bg-slate-950 border border-slate-800 rounded-xl p-4 font-mono text-xs text-cyan-300 focus:outline-none focus:border-cyan-500 leading-relaxed"
+              className="w-full bg-[#050A19] border border-[#26314A] rounded-xl p-4 font-mono text-xs text-[#22D3EE] focus:outline-none focus:border-[#5B3DF5] leading-relaxed"
             />
           </div>
 
           {/* Test Harness Results Output */}
           {result && (
-            <div className="p-4 bg-slate-950 border border-slate-800 rounded-xl space-y-3 font-mono text-xs">
-              <div className="flex items-center justify-between border-b border-slate-800 pb-2">
+            <div className="p-4 bg-[#050A19] border border-[#26314A] rounded-xl space-y-3 text-xs font-mono">
+              <div className="flex items-center justify-between border-b border-[#26314A] pb-2">
                 <span className="font-bold text-white flex items-center gap-1.5">
-                  <Terminal className="w-4 h-4 text-cyan-400" /> EXECUTION HARNESS
+                  <Terminal className="w-4 h-4 text-[#22D3EE]" /> EXECUTION HARNESS
                 </span>
-                <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-                  result.status === 'PASSED' ? 'bg-emerald-950 text-emerald-400 border border-emerald-800' : 'bg-rose-950 text-rose-400 border border-rose-800'
+                <span className={`px-2.5 py-0.5 rounded text-[10px] font-bold ${
+                  result.status === 'PASSED' ? 'bg-[#00E6A7]/10 text-[#00E6A7] border border-[#00E6A7]/30' : 'bg-rose-950 text-rose-400 border border-rose-800'
                 }`}>
                   {result.status} ({result.testsPassed} / {result.totalTests} PASSED)
                 </span>
@@ -143,13 +147,13 @@ export default function CodingArenaPage() {
 
               <div className="space-y-2 max-h-40 overflow-y-auto">
                 {result.testResults?.map((tr: any, idx: number) => (
-                  <div key={idx} className="p-2 bg-slate-900 rounded border border-slate-800 flex items-center justify-between text-[11px]">
+                  <div key={idx} className="p-2.5 bg-[#11182B] rounded-lg border border-[#26314A] flex items-center justify-between text-[11px]">
                     <div>
-                      <span className="text-slate-400">INPUT: {tr.input}</span>
-                      <div className="text-slate-300">EXPECTED: {tr.expected} | ACTUAL: {tr.actual}</div>
+                      <span className="text-[#64748B]">INPUT: {tr.input}</span>
+                      <div className="text-white">EXPECTED: {tr.expected} | ACTUAL: {tr.actual}</div>
                     </div>
                     {tr.passed ? (
-                      <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                      <CheckCircle2 className="w-4 h-4 text-[#00E6A7] shrink-0" />
                     ) : (
                       <AlertCircle className="w-4 h-4 text-rose-400 shrink-0" />
                     )}
@@ -163,3 +167,4 @@ export default function CodingArenaPage() {
     </div>
   );
 }
+

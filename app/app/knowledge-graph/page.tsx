@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { Network, Lock, CheckCircle2, PlayCircle, ShieldCheck, BookOpen, Code2, Search, ZoomIn, ZoomOut, RotateCcw, ArrowRight } from 'lucide-react';
+import { Network, Lock, CheckCircle2, PlayCircle, ShieldCheck, BookOpen, Code2, Search, ZoomIn, ZoomOut, RotateCcw, ArrowRight, Sparkles, Layers } from 'lucide-react';
 
 export default function KnowledgeGraphPage() {
   const initialNodes = [
@@ -77,6 +77,7 @@ export default function KnowledgeGraphPage() {
   const [selectedNode, setSelectedNode] = useState(initialNodes[2]);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("ALL");
+  const [zoomLevel, setZoomLevel] = useState(100);
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -89,7 +90,7 @@ export default function KnowledgeGraphPage() {
       case 'LOCKED':
         return <span className="px-2.5 py-0.5 rounded-full bg-[#050A19] text-[#64748B] border border-[#26314A] text-[10px] font-bold">LOCKED</span>;
       default:
-        return <span className="px-2.5 py-0.5 rounded-full bg-[#11182B] text-[#F8FAFC] border border-[#26314A] text-[10px] font-bold">AVAILABLE</span>;
+        return <span className="px-2.5 py-0.5 rounded-full bg-[#11182B] text-white border border-[#26314A] text-[10px] font-bold">AVAILABLE</span>;
     }
   };
 
@@ -110,10 +111,10 @@ export default function KnowledgeGraphPage() {
           </span>
         </div>
         <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-          Knowledge Graph
+          Knowledge Graph Engine
         </h1>
         <p className="text-xs sm:text-sm text-[#94A3B8] max-w-3xl leading-relaxed">
-          Explore prerequisite topic chains, skill dependencies, and topic unlock paths. Master foundational concepts before advancing to higher-order architecture.
+          Interactive competency map displaying topic prerequisite chains, skill dependencies, and topic unlock vectors.
         </p>
       </div>
 
@@ -159,17 +160,20 @@ export default function KnowledgeGraphPage() {
         {/* GRAPH CANVAS / NODES GRID */}
         <div className="lg:col-span-2 bg-[#11182B] border border-[#26314A] rounded-2xl p-6 space-y-4">
           <div className="flex items-center justify-between border-b border-[#26314A] pb-3">
-            <span className="text-xs font-bold text-[#64748B] uppercase tracking-wider">
-              FULL STACK COMPETENCY GRAPH ({filteredNodes.length} NODES)
+            <span className="text-xs font-bold text-[#64748B] uppercase tracking-wider flex items-center gap-2">
+              <Layers className="w-4 h-4 text-[#22D3EE]" /> FULL STACK COMPETENCY DAG ({filteredNodes.length} NODES)
             </span>
             <div className="flex items-center gap-1 text-[#94A3B8]">
-              <button className="p-1.5 bg-[#050A19] border border-[#26314A] rounded-lg hover:text-white"><ZoomIn className="w-3.5 h-3.5" /></button>
-              <button className="p-1.5 bg-[#050A19] border border-[#26314A] rounded-lg hover:text-white"><ZoomOut className="w-3.5 h-3.5" /></button>
-              <button className="p-1.5 bg-[#050A19] border border-[#26314A] rounded-lg hover:text-white"><RotateCcw className="w-3.5 h-3.5" /></button>
+              <button onClick={() => setZoomLevel(prev => Math.min(150, prev + 10))} className="p-1.5 bg-[#050A19] border border-[#26314A] rounded-lg hover:text-white"><ZoomIn className="w-3.5 h-3.5" /></button>
+              <button onClick={() => setZoomLevel(prev => Math.max(70, prev - 10))} className="p-1.5 bg-[#050A19] border border-[#26314A] rounded-lg hover:text-white"><ZoomOut className="w-3.5 h-3.5" /></button>
+              <button onClick={() => setZoomLevel(100)} className="p-1.5 bg-[#050A19] border border-[#26314A] rounded-lg hover:text-white"><RotateCcw className="w-3.5 h-3.5" /></button>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 py-2">
+          <div
+            className="grid grid-cols-1 sm:grid-cols-2 gap-4 py-2 transition-transform duration-200 origin-top-left"
+            style={{ transform: `scale(${zoomLevel / 100})` }}
+          >
             {filteredNodes.map((node) => {
               const isSelected = selectedNode?.id === node.id;
               return (
@@ -189,7 +193,7 @@ export default function KnowledgeGraphPage() {
 
                   <div>
                     <h3 className="font-bold text-white text-base">{node.name}</h3>
-                    <p className="text-xs text-[#94A3B8] line-clamp-2 mt-1">{node.description}</p>
+                    <p className="text-xs text-[#94A3B8] line-clamp-2 mt-1 leading-relaxed">{node.description}</p>
                   </div>
 
                   <div className="pt-2 border-t border-[#26314A] flex items-center justify-between text-xs">
@@ -228,7 +232,7 @@ export default function KnowledgeGraphPage() {
               </div>
 
               <div className="bg-[#050A19] border border-[#26314A] p-4 rounded-xl space-y-1">
-                <div className="text-[10px] font-bold text-[#20D9C2] uppercase tracking-wider">DEPENDENT UNLOCK PATHS</div>
+                <div className="text-[10px] font-bold text-[#00E6A7] uppercase tracking-wider">DEPENDENT UNLOCK PATHS</div>
                 <div className="text-white font-medium">
                   {selectedNode.dependentSkills?.length > 0 ? selectedNode.dependentSkills.join(", ") : "Terminal Node"}
                 </div>
@@ -262,4 +266,5 @@ export default function KnowledgeGraphPage() {
     </div>
   );
 }
+
 
