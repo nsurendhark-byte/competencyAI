@@ -4,19 +4,22 @@
 
 @layer base {
   :root {
-    --bg-main: #060913;
-    --bg-surface: #0E1626;
-    --border-color: #1E293B;
-    --accent-cyan: #06B6D4;
-    --accent-emerald: #10B981;
-    --accent-indigo: #6366F1;
-    --accent-violet: #8B5CF6;
+    --bg-main: #020617;
+    --bg-surface-dark: #05091A;
+    --bg-card-dark: #11182B;
+    --bg-input-dark: #050A19;
+    --border-color: #26314A;
+    --purple-primary: #5B3DF5;
+    --purple-bright: #633BFF;
+    --blue-accent: #3B82F6;
+    --cyan-accent: #22D3EE;
+    --teal-accent: #20D9C2;
   }
 
   body {
     background-color: var(--bg-main);
     color: #F8FAFC;
-    font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-family: 'Poppins', 'Inter', -apple-system, sans-serif;
     overflow-x: hidden;
   }
 }

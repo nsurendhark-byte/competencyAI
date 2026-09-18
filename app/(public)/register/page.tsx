@@ -2,36 +2,29 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import PublicNavbar from '@/components/PublicNavbar';
 import PublicFooter from '@/components/PublicFooter';
-import { Cpu, ArrowRight, AlertCircle, CheckCircle2, Lock, Mail, Phone, User } from 'lucide-react';
+import { Sparkles, ArrowRight, AlertCircle, Lock, Mail, User } from 'lucide-react';
 import { safeFetch } from '@/lib/api-response';
 
 export default function RegisterPage() {
-  const router = useRouter();
-  const [form, setForm] = useState({
-    fullName: '',
-    email: '',
-    mobile: '',
-    password: '',
-    confirmPassword: ''
-  });
+  const [fullName, setFullName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-    setSuccess('');
 
-    if (form.password !== form.confirmPassword) {
+    if (password !== confirmPassword) {
       setError('Passwords do not match.');
       return;
     }
 
-    if (form.password.length < 8) {
+    if (password.length < 8) {
       setError('Password must be at least 8 characters long.');
       return;
     }
@@ -42,66 +35,38 @@ export default function RegisterPage() {
       const res = await safeFetch('/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form)
+        body: JSON.stringify({ fullName, email, password, confirmPassword })
       });
 
-      if (!res.ok) {
-        // Fallback for static HTML export (e.g., GitHub Pages or static dev preview) where POST to /api returns 405/404
-        if (res.status === 405 || res.status === 404 || res.data?.error?.includes('non-JSON')) {
-          setSuccess('Account created successfully! Initializing session...');
-          if (typeof window !== 'undefined') {
-            const userSession = {
-              id: 'usr-' + Date.now(),
-              email: form.email.toLowerCase().trim(),
-              fullName: form.fullName,
-              mobile: form.mobile || null,
-              role: 'LEARNER',
-              isVerified: true
-            };
-            localStorage.setItem('competency_user_session', JSON.stringify(userSession));
-            document.cookie = `competency_session=user-token; path=/; max-age=86400`;
-          }
-          setTimeout(() => {
-            router.push('/app/onboarding');
-          }, 1000);
-          return;
-        }
+      if (res.ok) {
+        // Auto login session setup
+        const loginRes = await safeFetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ identifier: email, password })
+        });
 
-        throw new Error(res.data?.error || res.data?.message || 'Registration failed.');
-      }
+        const sessionUser = {
+          id: res.data?.userId || 'usr-' + Date.now(),
+          email: email.toLowerCase(),
+          fullName: fullName,
+          role: 'LEARNER'
+        };
 
-      setSuccess('Account created successfully! Logging you in...');
-      
-      // Auto login
-      const loginRes = await safeFetch('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ identifier: form.email, password: form.password })
-      });
-      
-      if (loginRes.ok) {
-        if (typeof window !== 'undefined' && loginRes.data?.user) {
-          localStorage.setItem('competency_user_session', JSON.stringify(loginRes.data.user));
-        }
-        setTimeout(() => {
-          router.push(loginRes.data?.redirectTo || '/app/onboarding');
-        }, 1000);
-      } else {
         if (typeof window !== 'undefined') {
-          const userSession = {
-            id: res.data?.userId || ('usr-' + Date.now()),
-            email: form.email.toLowerCase().trim(),
-            fullName: form.fullName,
-            mobile: form.mobile || null,
-            role: 'LEARNER'
-          };
-          localStorage.setItem('competency_user_session', JSON.stringify(userSession));
-          document.cookie = `competency_session=user-token; path=/; max-age=86400`;
+          localStorage.setItem('competency_user_session', JSON.stringify(sessionUser));
+          if (loginRes.ok && loginRes.data?.token) {
+            document.cookie = `competency_session=${loginRes.data.token}; path=/; max-age=604800; SameSite=Lax`;
+          } else {
+            document.cookie = `competency_session=user-token; path=/; max-age=86400; SameSite=Lax`;
+          }
         }
-        setTimeout(() => {
-          router.push('/app/onboarding');
-        }, 1000);
+
+        window.location.href = '/app/onboarding';
+        return;
       }
+
+      throw new Error(res.data?.error || res.data?.message || 'Registration failed.');
     } catch (err: any) {
       setError(err.message || 'Registration failed');
     } finally {
@@ -110,105 +75,96 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background text-slate-100 flex flex-col">
+    <div className="min-h-screen bg-[#020617] text-[#F8FAFC] flex flex-col font-poppins antialiased">
       <PublicNavbar />
-      <main className="flex-1 flex items-center justify-center py-16 px-4">
-        <div className="w-full max-w-md bg-surface border border-surfaceBorder rounded-2xl p-8 space-y-6 shadow-2xl glow-cyan">
+
+      <main className="flex-1 flex items-center justify-center py-12 px-4">
+        <div className="w-full max-w-[380px] bg-[#11182B] border border-[#26314A] rounded-2xl p-7 space-y-6 shadow-2xl">
+          {/* Header Logo */}
           <div className="text-center space-y-2">
-            <div className="w-12 h-12 bg-cyan-950/80 border border-cyan-500/40 rounded-xl mx-auto flex items-center justify-center text-cyan-400 font-mono font-bold text-xl">
-              <Cpu className="w-6 h-6" />
+            <div className="w-10 h-10 rounded-xl bg-[#050A19] border border-[#3B82F6]/40 flex items-center justify-center text-[#22D3EE] mx-auto shadow-sm shadow-[#22D3EE]/20">
+              <Sparkles className="w-5 h-5 text-[#22D3EE]" />
             </div>
-            <h1 className="text-2xl font-bold text-white tracking-tight">Create CompetencyAI Account</h1>
-            <p className="text-xs text-slate-400 font-mono">Initialize your Career Intelligence profile</p>
+            <h1 className="text-xl font-extrabold text-[#F8FAFC] tracking-tight">
+              Create Your CompetencyAI Account
+            </h1>
+            <p className="text-xs text-[#94A3B8] font-normal">
+              Start your Knowledge Graph and adaptive competency learning.
+            </p>
           </div>
 
-
           {error && (
-            <div className="p-3 bg-rose-950/60 border border-rose-500/50 rounded-lg text-xs text-rose-300 flex items-center gap-2 font-mono">
+            <div className="p-3 bg-rose-950/60 border border-rose-500/50 rounded-xl text-xs text-rose-300 flex items-center gap-2">
               <AlertCircle className="w-4 h-4 shrink-0" />
               <span>{error}</span>
             </div>
           )}
 
-          {success && (
-            <div className="p-3 bg-emerald-950/60 border border-emerald-500/50 rounded-lg text-xs text-emerald-300 flex items-center gap-2 font-mono">
-              <CheckCircle2 className="w-4 h-4 shrink-0" />
-              <span>{success}</span>
-            </div>
-          )}
-
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-xs font-mono text-slate-400 mb-1">FULL NAME</label>
+              <label className="block text-xs font-semibold text-[#94A3B8] mb-1.5">
+                Full Name
+              </label>
               <div className="relative">
-                <User className="w-4 h-4 absolute left-3 top-3 text-slate-500" />
+                <User className="w-4 h-4 absolute left-3 top-3 text-[#64748B]" />
                 <input
                   type="text"
                   required
-                  value={form.fullName}
-                  onChange={(e) => setForm({ ...form, fullName: e.target.value })}
-                  placeholder="Enter full name"
-                  className="w-full bg-slate-900 border border-slate-700 rounded-lg pl-9 pr-3 py-2 text-sm text-white focus:outline-none focus:border-cyan-500"
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                  placeholder="Demo Student"
+                  className="w-full bg-[#050A19] border border-[#26314A] rounded-xl pl-9 pr-3 py-2.5 text-xs text-[#F8FAFC] placeholder-[#64748B] focus:outline-none focus:border-[#5B3DF5] transition-all"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-xs font-mono text-slate-400 mb-1">EMAIL ADDRESS</label>
+              <label className="block text-xs font-semibold text-[#94A3B8] mb-1.5">
+                Email Address
+              </label>
               <div className="relative">
-                <Mail className="w-4 h-4 absolute left-3 top-3 text-slate-500" />
+                <Mail className="w-4 h-4 absolute left-3 top-3 text-[#64748B]" />
                 <input
                   type="email"
                   required
-                  value={form.email}
-                  onChange={(e) => setForm({ ...form, email: e.target.value })}
-                  placeholder="Enter email address"
-                  className="w-full bg-slate-900 border border-slate-700 rounded-lg pl-9 pr-3 py-2 text-sm text-white focus:outline-none focus:border-cyan-500"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="demo.student@college.edu"
+                  className="w-full bg-[#050A19] border border-[#26314A] rounded-xl pl-9 pr-3 py-2.5 text-xs text-[#F8FAFC] placeholder-[#64748B] focus:outline-none focus:border-[#5B3DF5] transition-all"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-xs font-mono text-slate-400 mb-1">MOBILE NUMBER (OPTIONAL)</label>
+              <label className="block text-xs font-semibold text-[#94A3B8] mb-1.5">
+                Password
+              </label>
               <div className="relative">
-                <Phone className="w-4 h-4 absolute left-3 top-3 text-slate-500" />
-                <input
-                  type="tel"
-                  value={form.mobile}
-                  onChange={(e) => setForm({ ...form, mobile: e.target.value })}
-                  placeholder="Enter mobile number"
-                  className="w-full bg-slate-900 border border-slate-700 rounded-lg pl-9 pr-3 py-2 text-sm text-white focus:outline-none focus:border-cyan-500"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-xs font-mono text-slate-400 mb-1">PASSWORD (MIN 8 CHARS)</label>
-              <div className="relative">
-                <Lock className="w-4 h-4 absolute left-3 top-3 text-slate-500" />
+                <Lock className="w-4 h-4 absolute left-3 top-3 text-[#64748B]" />
                 <input
                   type="password"
                   required
-                  minLength={8}
-                  value={form.password}
-                  onChange={(e) => setForm({ ...form, password: e.target.value })}
-                  placeholder="••••••••"
-                  className="w-full bg-slate-900 border border-slate-700 rounded-lg pl-9 pr-3 py-2 text-sm text-white focus:outline-none focus:border-cyan-500"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="••••••••••"
+                  className="w-full bg-[#050A19] border border-[#26314A] rounded-xl pl-9 pr-3 py-2.5 text-xs text-[#F8FAFC] placeholder-[#64748B] focus:outline-none focus:border-[#5B3DF5] transition-all"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-xs font-mono text-slate-400 mb-1">CONFIRM PASSWORD</label>
+              <label className="block text-xs font-semibold text-[#94A3B8] mb-1.5">
+                Confirm Password
+              </label>
               <div className="relative">
-                <Lock className="w-4 h-4 absolute left-3 top-3 text-slate-500" />
+                <Lock className="w-4 h-4 absolute left-3 top-3 text-[#64748B]" />
                 <input
                   type="password"
                   required
-                  value={form.confirmPassword}
-                  onChange={(e) => setForm({ ...form, confirmPassword: e.target.value })}
-                  placeholder="••••••••"
-                  className="w-full bg-slate-900 border border-slate-700 rounded-lg pl-9 pr-3 py-2 text-sm text-white focus:outline-none focus:border-cyan-500"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  placeholder="••••••••••"
+                  className="w-full bg-[#050A19] border border-[#26314A] rounded-xl pl-9 pr-3 py-2.5 text-xs text-[#F8FAFC] placeholder-[#64748B] focus:outline-none focus:border-[#5B3DF5] transition-all"
                 />
               </div>
             </div>
@@ -216,21 +172,21 @@ export default function RegisterPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 bg-gradient-to-r from-cyan-500 to-indigo-600 text-slate-950 font-bold text-sm rounded-lg hover:brightness-110 transition-all flex items-center justify-center gap-2 shadow-lg shadow-cyan-500/20 disabled:opacity-50"
+              className="w-full py-3 bg-[#5B3DF5] hover:bg-[#633BFF] text-white font-semibold text-xs rounded-xl transition-all flex items-center justify-center gap-1.5 shadow-lg shadow-[#5B3DF5]/30 disabled:opacity-50 mt-2"
             >
-              {loading ? 'INITIALIZING ACCOUNT...' : 'REGISTER ACCOUNT'}
-              <ArrowRight className="w-4 h-4" />
+              {loading ? 'Creating Account...' : 'Create Account'} <ArrowRight className="w-3.5 h-3.5" />
             </button>
           </form>
 
-          <div className="text-center text-xs text-slate-400">
-            Already registered?{' '}
-            <Link href="/login" className="text-cyan-400 hover:underline font-mono">
-              LOG IN HERE
+          <div className="text-center text-xs text-[#94A3B8] pt-2 border-t border-[#26314A]">
+            Already have an account?{' '}
+            <Link href="/login" className="text-[#3B82F6] hover:underline font-semibold">
+              Sign In
             </Link>
           </div>
         </div>
       </main>
+
       <PublicFooter />
     </div>
   );

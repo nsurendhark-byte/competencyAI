@@ -21,9 +21,9 @@ export default function RootLayout({
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
       </head>
-      <body className="bg-background text-slate-100 min-h-screen flex flex-col antialiased selection:bg-cyan-500 selection:text-black">
+      <body className="bg-[#020617] text-[#F8FAFC] font-sans min-h-screen flex flex-col antialiased selection:bg-[#5B3DF5] selection:text-white">
         {children}
       </body>
     </html>

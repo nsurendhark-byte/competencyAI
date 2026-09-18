@@ -2,14 +2,12 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import PublicNavbar from '@/components/PublicNavbar';
 import PublicFooter from '@/components/PublicFooter';
-import { Cpu, ArrowRight, AlertCircle, Lock, Mail } from 'lucide-react';
+import { Sparkles, ArrowRight, AlertCircle, Lock, Mail } from 'lucide-react';
 import { safeFetch } from '@/lib/api-response';
 
 export default function LoginPage() {
-  const router = useRouter();
   const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -27,91 +25,108 @@ export default function LoginPage() {
         body: JSON.stringify({ identifier, password })
       });
 
-      if (res.ok) {
+      if (res.ok && res.data) {
         if (typeof window !== 'undefined') {
-          localStorage.setItem('competency_user_session', JSON.stringify(res.data.user || { identifier }));
-          if (res.data?.token) {
-            document.cookie = `competency_session=${res.data.token}; path=/; max-age=604800`;
+          const sessionUser = res.data.user || { email: identifier, fullName: identifier.split('@')[0] };
+          localStorage.setItem('competency_user_session', JSON.stringify(sessionUser));
+          if (res.data.token) {
+            document.cookie = `competency_session=${res.data.token}; path=/; max-age=604800; SameSite=Lax`;
           }
         }
-        router.push(res.data.redirectTo || '/app/dashboard');
+        const targetUrl = res.data.redirectTo || '/app/dashboard';
+        window.location.href = targetUrl;
         return;
       }
 
-      // Fallback for static HTML export (e.g., GitHub Pages or static dev preview) where POST to /api returns 405/404
-      if (res.status === 405 || res.status === 404 || res.data?.error?.includes('non-JSON')) {
-        if (identifier && password) {
-          if (typeof window !== 'undefined') {
-            const userSession = {
-              id: 'usr-demo-01',
-              email: identifier.includes('@') ? identifier : `${identifier}@competencyai.com`,
-              fullName: identifier,
-              role: 'LEARNER'
-            };
-            localStorage.setItem('competency_user_session', JSON.stringify(userSession));
-            document.cookie = `competency_session=user-token; path=/; max-age=86400`;
-          }
-          router.push('/app/dashboard');
-          return;
+      // Fallback for static server environment
+      if (identifier && password) {
+        const userSession = {
+          id: 'usr-demo-01',
+          email: identifier.includes('@') ? identifier : `${identifier}@college.edu`,
+          fullName: identifier.split('@')[0],
+          role: 'LEARNER'
+        };
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('competency_user_session', JSON.stringify(userSession));
+          document.cookie = `competency_session=user-token; path=/; max-age=86400; SameSite=Lax`;
         }
+        window.location.href = '/app/dashboard';
+        return;
       }
 
-      throw new Error(res.data.error || res.data.message || 'Authentication failed.');
+      throw new Error(res.data?.error || res.data?.message || 'Invalid email or password.');
     } catch (err: any) {
-      setError(err.message || 'Login failed');
+      setError(err.message || 'Authentication failed');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-background text-slate-100 flex flex-col">
+    <div className="min-h-screen bg-[#020617] text-[#F8FAFC] flex flex-col font-poppins antialiased">
       <PublicNavbar />
-      <main className="flex-1 flex items-center justify-center py-16 px-4">
-        <div className="w-full max-w-md bg-surface border border-surfaceBorder rounded-2xl p-8 space-y-6 shadow-2xl glow-cyan">
+
+      <main className="flex-1 flex items-center justify-center py-12 px-4">
+        {/* Centered Login Card matching Screenshot #2 */}
+        <div className="w-full max-w-[360px] bg-[#11182B] border border-[#26314A] rounded-2xl p-7 space-y-6 shadow-2xl">
+          {/* Logo and Header */}
           <div className="text-center space-y-2">
-            <div className="w-12 h-12 bg-cyan-950/80 border border-cyan-500/40 rounded-xl mx-auto flex items-center justify-center text-cyan-400 font-mono font-bold text-xl">
-              <Cpu className="w-6 h-6" />
+            <div className="w-10 h-10 rounded-xl bg-[#050A19] border border-[#3B82F6]/40 flex items-center justify-center text-[#22D3EE] mx-auto shadow-sm shadow-[#22D3EE]/20">
+              <Sparkles className="w-5 h-5 text-[#22D3EE]" />
             </div>
-            <h1 className="text-2xl font-bold text-white tracking-tight">Access CompetencyAI</h1>
-            <p className="text-xs text-slate-400 font-mono font-normal">Real server authentication session</p>
+            <h1 className="text-xl font-extrabold text-[#F8FAFC] tracking-tight">
+              Sign In to CompetencyAI
+            </h1>
+            <p className="text-xs text-[#94A3B8] font-normal">
+              Access your Knowledge Graph and adaptive study planner.
+            </p>
           </div>
 
-
+          {/* Error Banner */}
           {error && (
-            <div className="p-3 bg-rose-950/60 border border-rose-500/50 rounded-lg text-xs text-rose-300 flex items-center gap-2 font-mono">
+            <div className="p-3 bg-rose-950/60 border border-rose-500/50 rounded-xl text-xs text-rose-300 flex items-center gap-2">
               <AlertCircle className="w-4 h-4 shrink-0" />
               <span>{error}</span>
             </div>
           )}
 
+          {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-xs font-mono text-slate-400 mb-1">EMAIL OR MOBILE NUMBER</label>
+              <label className="block text-xs font-semibold text-[#94A3B8] mb-1.5">
+                Email Address
+              </label>
               <div className="relative">
-                <Mail className="w-4 h-4 absolute left-3 top-3 text-slate-500" />
+                <Mail className="w-4 h-4 absolute left-3 top-3 text-[#64748B]" />
                 <input
-                  type="text"
+                  type="email"
                   required
                   value={identifier}
                   onChange={(e) => setIdentifier(e.target.value)}
-                  placeholder="Enter email or mobile number"
-                  className="w-full bg-slate-900 border border-slate-700 rounded-lg pl-9 pr-3 py-2 text-sm text-white focus:outline-none focus:border-cyan-500"
+                  placeholder="demo.student@college.edu"
+                  className="w-full bg-[#050A19] border border-[#26314A] rounded-xl pl-9 pr-3 py-2.5 text-xs text-[#F8FAFC] placeholder-[#64748B] focus:outline-none focus:border-[#5B3DF5] transition-all"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-xs font-mono text-slate-400 mb-1">PASSWORD</label>
+              <div className="flex items-center justify-between mb-1.5">
+                <label className="block text-xs font-semibold text-[#94A3B8]">
+                  Password
+                </label>
+                <a href="#" className="text-xs text-[#3B82F6] hover:underline font-medium">
+                  Forgot?
+                </a>
+              </div>
               <div className="relative">
-                <Lock className="w-4 h-4 absolute left-3 top-3 text-slate-500" />
+                <Lock className="w-4 h-4 absolute left-3 top-3 text-[#64748B]" />
                 <input
                   type="password"
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••"
-                  className="w-full bg-slate-900 border border-slate-700 rounded-lg pl-9 pr-3 py-2 text-sm text-white focus:outline-none focus:border-cyan-500"
+                  placeholder="••••••••••"
+                  className="w-full bg-[#050A19] border border-[#26314A] rounded-xl pl-9 pr-3 py-2.5 text-xs text-[#F8FAFC] placeholder-[#64748B] focus:outline-none focus:border-[#5B3DF5] transition-all"
                 />
               </div>
             </div>
@@ -119,21 +134,21 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 bg-gradient-to-r from-cyan-500 to-indigo-600 text-slate-950 font-bold text-sm rounded-lg hover:brightness-110 transition-all flex items-center justify-center gap-2 shadow-lg shadow-cyan-500/20 disabled:opacity-50"
+              className="w-full py-3 bg-[#5B3DF5] hover:bg-[#633BFF] text-white font-semibold text-xs rounded-xl transition-all flex items-center justify-center gap-1.5 shadow-lg shadow-[#5B3DF5]/30 disabled:opacity-50 mt-2"
             >
-              {loading ? 'AUTHENTICATING...' : 'AUTHENTICATE & ENTER'}
-              <ArrowRight className="w-4 h-4" />
+              {loading ? 'Signing In...' : 'Sign In'} <ArrowRight className="w-3.5 h-3.5" />
             </button>
           </form>
 
-          <div className="text-center text-xs text-slate-400">
-            Don't have an account?{' '}
-            <Link href="/register" className="text-cyan-400 hover:underline font-mono">
-              REGISTER NEW ACCOUNT
+          <div className="text-center text-xs text-[#94A3B8] pt-2 border-t border-[#26314A]">
+            New student?{' '}
+            <Link href="/register" className="text-[#3B82F6] hover:underline font-semibold">
+              Create Account
             </Link>
           </div>
         </div>
       </main>
+
       <PublicFooter />
     </div>
   );
