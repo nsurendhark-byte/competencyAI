@@ -87,8 +87,8 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* FOUR FEATURE CARDS GRID */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      {/* THREE FEATURE CARDS GRID */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Link href="/app/knowledge-graph" className="group bg-[#11182B] border border-[#26314A] hover:border-[#5B3DF5] p-5 rounded-2xl space-y-3 transition-all hover:shadow-lg hover:shadow-[#5B3DF5]/10">
           <div className="w-10 h-10 rounded-xl bg-[#050A19] border border-[#26314A] flex items-center justify-center text-[#22D3EE] group-hover:scale-105 transition-transform">
             <Network className="w-5 h-5" />
@@ -111,7 +111,7 @@ export default function DashboardPage() {
           <div>
             <h3 className="font-bold text-white text-base group-hover:text-[#22D3EE] transition-colors">Personalized Roadmap</h3>
             <p className="text-xs text-[#94A3B8] mt-1 leading-relaxed">
-              Adaptive study sequence tailored dynamically to your pace, weekly hours, and assessment results.
+              Adaptive study sequence tailored dynamically to your pace, weekly hours, and mastery results.
             </p>
           </div>
           <div className="text-xs font-semibold text-[#5B3DF5] flex items-center gap-1 pt-1">
@@ -131,21 +131,6 @@ export default function DashboardPage() {
           </div>
           <div className="text-xs font-semibold text-[#5B3DF5] flex items-center gap-1 pt-1">
             Check Readiness <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
-          </div>
-        </Link>
-
-        <Link href="/app/assessment" className="group bg-[#11182B] border border-[#26314A] hover:border-[#5B3DF5] p-5 rounded-2xl space-y-3 transition-all hover:shadow-lg hover:shadow-[#5B3DF5]/10">
-          <div className="w-10 h-10 rounded-xl bg-[#050A19] border border-[#26314A] flex items-center justify-center text-amber-400 group-hover:scale-105 transition-transform">
-            <Target className="w-5 h-5" />
-          </div>
-          <div>
-            <h3 className="font-bold text-white text-base group-hover:text-[#22D3EE] transition-colors">Predictive Success</h3>
-            <p className="text-xs text-[#94A3B8] mt-1 leading-relaxed">
-              Generative AI evaluates assessment scores to classify competency gaps and test readiness.
-            </p>
-          </div>
-          <div className="text-xs font-semibold text-[#5B3DF5] flex items-center gap-1 pt-1">
-            Take Assessment <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
           </div>
         </Link>
       </div>

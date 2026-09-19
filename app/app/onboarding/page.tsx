@@ -137,9 +137,9 @@ export default function OnboardingPage() {
           skillsRatings
         })
       });
-      router.push('/app/assessment');
+      router.push('/app/dashboard');
     } catch (e) {
-      router.push('/app/assessment');
+      router.push('/app/dashboard');
     }
   };
 
@@ -414,7 +414,7 @@ export default function OnboardingPage() {
                 disabled={submitting}
                 className="px-6 py-3 bg-[#5B3DF5] hover:bg-[#633BFF] text-white font-semibold text-xs rounded-xl flex items-center gap-2 shadow-lg shadow-[#5B3DF5]/30 transition-all disabled:opacity-50"
               >
-                {submitting ? 'Initializing Assessment...' : 'Continue to Learning Style Assessment'} <ArrowRight className="w-4 h-4" />
+                {submitting ? 'Initializing Profile...' : 'Complete Profile & View Dashboard'} <ArrowRight className="w-4 h-4" />
               </button>
             </div>
           </div>

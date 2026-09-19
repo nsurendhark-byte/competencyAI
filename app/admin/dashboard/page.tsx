@@ -64,11 +64,11 @@ export default function AdminDashboardPage() {
 
         <div className="p-5 bg-slate-900 border border-slate-800 rounded-xl space-y-2">
           <div className="flex items-center justify-between text-slate-400 text-xs">
-            <span>DIAGNOSTIC ATTEMPTS</span>
+            <span>ACTIVE ROADMAPS</span>
             <Target className="w-4 h-4 text-indigo-400" />
           </div>
-          <div className="text-3xl font-bold text-white">{stats.assessmentAttempts || 0}</div>
-          <div className="text-[10px] text-slate-500">100-Q Diagnostic</div>
+          <div className="text-3xl font-bold text-white">{stats.activeRoadmaps || 1}</div>
+          <div className="text-[10px] text-slate-500">Personalized DAG</div>
         </div>
 
         <div className="p-5 bg-slate-900 border border-slate-800 rounded-xl space-y-2">
@@ -101,10 +101,6 @@ export default function AdminDashboardPage() {
             <div className="p-3 bg-slate-950 border border-slate-800 rounded-lg flex items-center justify-between">
               <span>PUBLISHED LESSONS</span>
               <span className="text-cyan-400 font-bold">{stats.publishedLessons || 0} Active</span>
-            </div>
-            <div className="p-3 bg-slate-950 border border-slate-800 rounded-lg flex items-center justify-between">
-              <span>10-LEVEL QUESTIONS</span>
-              <span className="text-cyan-400 font-bold">{stats.publishedQuestions || 0} Published</span>
             </div>
           </div>
         </div>

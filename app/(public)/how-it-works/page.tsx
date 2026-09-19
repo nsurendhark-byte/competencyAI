@@ -5,7 +5,7 @@ import { ArrowRight, CheckCircle2 } from 'lucide-react';
 export default function HowItWorksPage() {
   const steps = [
     { num: '01', title: 'Career Goal Selection', desc: 'Select your target engineering profile (e.g. Full-Stack Engineer, AI Systems Architect).' },
-    { num: '02', title: '100-Question Diagnostic Assessment', desc: 'Complete our 10-level diagnostic evaluating syntax, debugging, output prediction, and scenario modeling.' },
+    { num: '02', title: 'Skill Gap & Mastery Evaluation', desc: 'Evaluate syntax, debugging, output prediction, and real-world scenario modeling.' },
     { num: '03', title: 'Competency Analysis & Knowledge Graph', desc: 'The AI engine evaluates answers, highlights missing prerequisites, and generates your interactive skill DAG.' },
     { num: '04', title: 'Personalized Roadmap & Study Material', desc: 'Access published lessons, interactive code snippets, and practice problems tailored to your gaps.' },
     { num: '05', title: 'Coding Arena & Project Verification', desc: 'Solve algorithm challenges evaluated in an isolated execution sandbox and submit capstone projects.' },

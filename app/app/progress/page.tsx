@@ -49,10 +49,10 @@ export default function ProgressPage() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="p-6 bg-[#11182B] border border-[#26314A] rounded-2xl space-y-3 shadow-xl">
           <div className="text-[10px] font-bold text-[#64748B] uppercase tracking-wider flex items-center gap-2">
-            <Target className="w-4 h-4 text-[#5B3DF5]" /> ASSESSMENT SCORE
+            <Target className="w-4 h-4 text-[#5B3DF5]" /> OVERALL MASTERY
           </div>
           <div className="text-4xl font-extrabold text-white">{stats.overallScore || 38}%</div>
-          <p className="text-xs text-[#94A3B8]">Diagnostic 100-question evaluation accuracy score</p>
+          <p className="text-xs text-[#94A3B8]">Aggregated skill evaluation accuracy score</p>
         </div>
 
         <div className="p-6 bg-[#11182B] border border-[#26314A] rounded-2xl space-y-3 shadow-xl">

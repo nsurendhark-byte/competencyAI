@@ -86,7 +86,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     { name: 'User Management', href: '/admin/users', icon: Users },
     { name: 'Careers & Skills Engine', href: '/admin/careers', icon: Compass },
     { name: 'Curriculum & Lessons', href: '/admin/curriculum', icon: BookOpen },
-    { name: '10-Level Question Bank', href: '/admin/assessments', icon: HelpCircle },
     { name: 'Coding & Projects Builder', href: '/admin/coding', icon: Code2 },
     { name: 'Knowledge Graph DAG', href: '/admin/knowledge-graph', icon: Network },
     { name: 'Issue Triage Desk', href: '/admin/issues', icon: AlertTriangle },

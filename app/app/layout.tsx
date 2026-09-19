@@ -82,7 +82,6 @@ export default function LearnerAppLayout({ children }: { children: React.ReactNo
     { name: 'Dashboard', href: '/app/dashboard', icon: LayoutDashboard },
     { name: 'My Learning Journey', href: '/app/learning', icon: GitBranch },
     { name: 'Knowledge Graph', href: '/app/knowledge-graph', icon: Network, badge: 'CORE' },
-    { name: 'Skill Assessment', href: '/app/assessment', icon: Target },
     { name: 'Resources', href: '/app/practice', icon: BookOpen },
     { name: 'AI Mentor', href: '/app/aura', icon: Sparkles, badge: 'AI' },
     { name: 'Quizzes', href: '/app/practice', icon: HelpCircle },

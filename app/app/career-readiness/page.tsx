@@ -31,7 +31,7 @@ export default function CareerReadinessPage() {
   const readinessPct = stats.readinessPercent || 78;
 
   const pillars = [
-    { name: 'Technical Readiness', score: stats.overallScore || 82, sub: '100-Question Assessment & Code VM', color: '#22D3EE' },
+    { name: 'Technical Readiness', score: stats.overallScore || 82, sub: 'Technical Quizzes & Code Sandbox', color: '#22D3EE' },
     { name: 'Project Readiness', score: 88, sub: 'Capstone Microservice Scored by AI', color: '#5B3DF5' },
     { name: 'Interview Readiness', score: 85, sub: 'Technical & HR AI Simulator', color: '#00E6A7' },
     { name: 'Industry Alignment', score: 90, sub: 'Full-Stack Benchmark Gap Fit', color: '#3B82F6' }
@@ -63,7 +63,7 @@ export default function CareerReadinessPage() {
             Target Career: Full Stack Developer
           </h1>
           <p className="text-xs sm:text-sm text-[#94A3B8] leading-relaxed">
-            Verifiable aggregate score calculated from diagnostic assessments, isolated VM sandbox code pass rates, capstone project rubrics, and mock interview performance.
+            Verifiable aggregate score calculated from topic mastery, isolated VM sandbox code pass rates, capstone project rubrics, and mock interview performance.
           </p>
         </div>
 

@@ -77,7 +77,6 @@ export default function AdminAiPage() {
                 className="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-white focus:outline-none focus:border-cyan-500"
               >
                 <option value="LESSON">Lesson Material (Theory + Code)</option>
-                <option value="QUESTION">Diagnostic Assessment Question</option>
               </select>
             </div>
 

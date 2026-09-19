@@ -4,7 +4,7 @@ import { Award, Target, Code2, Network, ShieldCheck, CheckCircle2, Flame, Sparkl
 
 export default function AchievementsPage() {
   const achievements = [
-    { title: 'Diagnostic Pioneer', desc: 'Completed your first 100-Question Diagnostic Assessment.', code: 'FIRST_ASSESSMENT', icon: Target, unlocked: true, xp: 150, date: 'Unlocked Sep 12' },
+    { title: 'Diagnostic Pioneer', desc: 'Completed your first skill evaluation and profile setup.', code: 'FIRST_ASSESSMENT', icon: Target, unlocked: true, xp: 150, date: 'Unlocked Sep 12' },
     { title: 'Code Maestro', desc: 'Passed all test cases on an isolated sandbox coding challenge.', code: 'CODING_MAESTRO', icon: Code2, unlocked: true, xp: 200, date: 'Unlocked Sep 14' },
     { title: 'Knowledge Architect', desc: 'Mapped out 5 competency nodes on your Knowledge Graph.', code: 'GRAPH_EXPLORER', icon: Network, unlocked: true, xp: 200, date: 'Unlocked Sep 16' },
     { title: 'Career Ready 70%', desc: 'Attained a 70%+ aggregate Career Readiness Index.', code: 'CAREER_READY_70', icon: Award, unlocked: false, xp: 300, date: 'Locked' },
@@ -28,7 +28,7 @@ export default function AchievementsPage() {
               Competency Badges & XP Achievements
             </h1>
             <p className="text-xs sm:text-sm text-[#94A3B8]">
-              Earn XP and unlock badges through real skill activity proof across assessments, coding sandbox, and projects.
+              Earn XP and unlock badges through real skill activity proof across quizzes, coding sandbox, and projects.
             </p>
           </div>
         </div>
@@ -51,8 +51,8 @@ export default function AchievementsPage() {
           <div className="text-2xl font-extrabold text-[#22D3EE]">{earnedAchievements.length} Badges</div>
         </div>
         <div className="bg-[#11182B] border border-[#26314A] p-4 rounded-xl space-y-1">
-          <div className="text-[10px] font-bold text-[#64748B] uppercase tracking-wider">ASSESSMENTS</div>
-          <div className="text-2xl font-extrabold text-white">1 Passed</div>
+          <div className="text-[10px] font-bold text-[#64748B] uppercase tracking-wider">QUIZZES</div>
+          <div className="text-2xl font-extrabold text-white">1 Completed</div>
         </div>
         <div className="bg-[#11182B] border border-[#26314A] p-4 rounded-xl space-y-1">
           <div className="text-[10px] font-bold text-[#64748B] uppercase tracking-wider">PROJECTS</div>
