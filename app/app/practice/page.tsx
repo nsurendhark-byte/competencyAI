@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import {
   BookOpen,
   HelpCircle,
@@ -14,7 +15,7 @@ import {
   Sparkles,
   ArrowRight,
   PlayCircle,
-  CheckSquare,
+  ExternalLink,
   AlertCircle
 } from 'lucide-react';
 
@@ -27,142 +28,150 @@ export default function PracticePage() {
   const [activeQuizModal, setActiveQuizModal] = useState<any | null>(null);
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
   const [submitted, setSubmitted] = useState(false);
-  const [showHint, setShowHint] = useState(false);
 
   const resources = [
     {
       id: 'res-1',
-      title: 'V8 Engine Memory Lifecycle & GC Deep Dive',
+      title: 'MDN Web Docs: Asynchronous JavaScript & Event Loop',
       skill: 'JavaScript Engine',
-      type: 'Video Track',
-      difficulty: 'Advanced',
-      duration: '45 mins',
-      progress: 80,
-      icon: Video,
-      link: 'https://v8.dev'
+      type: 'Documentation',
+      provider: 'MDN Web Docs',
+      difficulty: 'Intermediate',
+      duration: '35 mins',
+      progress: 85,
+      icon: FileText,
+      link: 'https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Asynchronous'
     },
     {
       id: 'res-2',
-      title: 'MDN Complete Guide to CSS Grid & Flexbox',
-      skill: 'CSS Layouts',
-      type: 'Documentation',
-      difficulty: 'Intermediate',
-      duration: '30 mins',
+      title: 'freeCodeCamp: Full JavaScript & React Course',
+      skill: 'React.js',
+      type: 'Video Track',
+      provider: 'freeCodeCamp',
+      difficulty: 'Beginner',
+      duration: '120 mins',
       progress: 100,
-      icon: FileText,
-      link: 'https://developer.mozilla.org'
+      icon: Video,
+      link: 'https://www.freecodecamp.org/news/javascript-full-course/'
     },
     {
       id: 'res-3',
-      title: 'React 19 Server Components & Actions Architecture',
-      skill: 'React.js',
+      title: 'Microsoft Learn: PostgreSQL Database Query Optimization',
+      skill: 'SQL & Databases',
       type: 'Course',
+      provider: 'Microsoft Learn',
       difficulty: 'Advanced',
       duration: '90 mins',
       progress: 40,
       icon: BookOpen,
-      link: '#'
+      link: 'https://learn.microsoft.com/en-us/training/modules/optimize-postgresql-queries/'
     },
     {
       id: 'res-4',
-      title: 'Async Event Loop & Microtask Debugging Sandbox',
-      skill: 'Async JS',
-      type: 'Practice',
+      title: 'Docker Documentation: Containerizing Node.js Microservices',
+      skill: 'Docker & DevOps',
+      type: 'Documentation',
+      provider: 'Docker Docs',
       difficulty: 'Intermediate',
-      duration: '60 mins',
-      progress: 25,
+      duration: '45 mins',
+      progress: 60,
       icon: Code2,
-      link: '#'
+      link: 'https://docs.docker.com/language/nodejs/'
+    },
+    {
+      id: 'res-5',
+      title: 'OWASP Top 10 Web Application Security Risks',
+      skill: 'Cybersecurity',
+      type: 'Documentation',
+      provider: 'OWASP Foundation',
+      difficulty: 'Advanced',
+      duration: '60 mins',
+      progress: 30,
+      icon: FileText,
+      link: 'https://owasp.org/www-project-top-ten/'
+    },
+    {
+      id: 'res-6',
+      title: 'PyTorch Official Tutorials: Deep Learning Fundamentals',
+      skill: 'AI / Machine Learning',
+      type: 'Guide',
+      provider: 'PyTorch Docs',
+      difficulty: 'Advanced',
+      duration: '90 mins',
+      progress: 10,
+      icon: BookOpen,
+      link: 'https://pytorch.org/tutorials/beginner/basics/intro.html'
     }
   ];
 
   const quizzes = [
     {
       id: 'q-1',
-      title: 'JavaScript Async Microtask & Macro Queue',
+      title: 'JavaScript Async Microtask & Event Loop',
       skill: 'JavaScript Runtime',
-      difficulty: 'Level 3',
+      difficulty: 'Intermediate',
       questionsCount: 10,
       timeLimit: '15 mins',
-      progress: 0,
-      score: null,
-      status: 'AVAILABLE',
+      score: 90,
+      status: 'COMPLETED',
       exercise: {
         title: 'JavaScript Async Microtask Execution Order',
         prompt: 'What will be logged to the console when the following code executes?',
-        code: `console.log('1');
-setTimeout(() => console.log('2'), 0);
-Promise.resolve().then(() => console.log('3'));
-console.log('4');`,
+        code: `console.log('1');\nsetTimeout(() => console.log('2'), 0);\nPromise.resolve().then(() => console.log('3'));\nconsole.log('4');`,
         options: ['1, 2, 3, 4', '1, 4, 3, 2', '1, 3, 4, 2', '4, 3, 2, 1'],
         correctIdx: 1,
-        hint: 'Synchronous code runs first (1, 4). Promises enter the Microtask queue (3), and setTimeout enters the Macrotask queue (2).',
         explanation: 'Microtasks (Promises) execute before Macrotasks (setTimeout) in the event loop queue cycle.'
       }
     },
     {
       id: 'q-2',
-      title: 'React Fiber Reconciliation & Hook Mechanics',
-      skill: 'React Component Life',
-      difficulty: 'Level 4',
+      title: 'React Custom Hooks & State Encapsulation',
+      skill: 'React.js',
+      difficulty: 'Intermediate',
       questionsCount: 12,
       timeLimit: '20 mins',
-      progress: 60,
-      score: 85,
-      status: 'RECOMMENDED',
+      score: null,
+      status: 'AVAILABLE',
       exercise: {
-        title: 'React Custom Hook State Isolation',
-        prompt: 'How does React isolate state when a custom hook is invoked in multiple components?',
-        code: `function useCounter() {
-  const [count, setCount] = useState(0);
-  return { count, increment: () => setCount(c => c + 1) };
-}`,
+        title: 'React Custom Hook Re-render Trigger',
+        prompt: 'When does a component using a custom hook re-render?',
+        code: `function useCounter() {\n  const [count, setCount] = useState(0);\n  return { count, increment: () => setCount(c => c + 1) };\n}`,
         options: [
-          'State is shared globally between components',
-          'Each component invocation receives its own separate state instance',
-          'State is merged into context root',
-          'State requires explicit redux dispatch'
+          'Only when props change',
+          'Whenever internal state inside the hook updates',
+          'Only on initial mounting',
+          'Never'
         ],
         correctIdx: 1,
-        hint: 'Custom hooks reuse stateful logic, not state itself.',
-        explanation: 'Every call to a custom hook gets completely isolated state variables.'
+        explanation: 'State changes inside custom hooks trigger re-renders in every component consuming that hook.'
       }
-    },
-    {
-      id: 'q-3',
-      title: 'SQL Relational Indexing & Join Query Optimization',
-      skill: 'Database Design',
-      difficulty: 'Level 5',
-      questionsCount: 15,
-      timeLimit: '25 mins',
-      progress: 100,
-      score: 92,
-      status: 'COMPLETED',
-      exercise: null
     }
   ];
 
   const filteredResources = resources.filter(res => {
+    const matchesFilter = resourceFilter === 'ALL' || res.type.toLowerCase().includes(resourceFilter.toLowerCase());
     const matchesSearch = res.title.toLowerCase().includes(searchTerm.toLowerCase()) || res.skill.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesFilter = resourceFilter === 'ALL' || res.type.toUpperCase().includes(resourceFilter);
-    return matchesSearch && matchesFilter;
+    return matchesFilter && matchesSearch;
   });
 
   return (
     <div className="space-y-6 font-sans">
-      {/* HEADER BANNER CARD */}
+      {/* HEADER BANNER */}
       <div className="bg-[#11182B] border border-[#26314A] rounded-2xl p-6 sm:p-8 space-y-4 shadow-xl">
-        <div className="flex items-center justify-between flex-wrap gap-4">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="space-y-1">
-            <span className="text-[10px] font-bold text-[#22D3EE] uppercase tracking-wider">
-              PRACTICE & RESOURCE HUB
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#050A19] border border-[#3B82F6]/30 text-[#22D3EE] text-xs font-semibold tracking-wider">
+              <BookOpen className="w-3.5 h-3.5 text-[#22D3EE]" />
+              VERIFIED CURATED RESOURCES &amp; QUIZZES
             </span>
             <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-              Learning Resources & Interactive Quizzes
+              Resource Library &amp; Technical Quizzes
             </h1>
+            <p className="text-xs sm:text-sm text-[#94A3B8]">
+              Access verified documentation from MDN, freeCodeCamp, Microsoft Learn, PyTorch, and Docker Docs.
+            </p>
           </div>
 
-          {/* SECTION SWITCH TABS */}
           <div className="flex items-center gap-1 bg-[#050A19] p-1.5 rounded-xl border border-[#26314A]">
             <button
               onClick={() => setActiveTab('resources')}
@@ -172,7 +181,7 @@ console.log('4');`,
                   : 'text-[#94A3B8] hover:text-white'
               }`}
             >
-              Learning Resources
+              Curated Resources
             </button>
             <button
               onClick={() => setActiveTab('quizzes')}
@@ -182,264 +191,219 @@ console.log('4');`,
                   : 'text-[#94A3B8] hover:text-white'
               }`}
             >
-              Interactive Quizzes
+              Technical Quizzes
             </button>
           </div>
         </div>
       </div>
 
-      {/* TABS CONTENT 1: LEARNING RESOURCES */}
+      {/* SEARCH AND FILTER BAR */}
+      <div className="bg-[#11182B] border border-[#26314A] rounded-2xl p-4 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-lg">
+        <div className="relative w-full sm:w-80">
+          <Search className="w-4 h-4 absolute left-3 top-3 text-[#64748B]" />
+          <input
+            type="text"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder="Search skills, topics, docs..."
+            className="w-full bg-[#050A19] border border-[#26314A] rounded-xl pl-9 pr-4 py-2 text-xs text-white placeholder-[#64748B] focus:outline-none focus:border-[#5B3DF5]"
+          />
+        </div>
+
+        {activeTab === 'resources' && (
+          <div className="flex items-center gap-2 overflow-x-auto custom-scrollbar w-full sm:w-auto">
+            {['ALL', 'Documentation', 'Video', 'Course', 'Guide'].map((type) => (
+              <button
+                key={type}
+                onClick={() => setResourceFilter(type)}
+                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all shrink-0 ${
+                  resourceFilter === type
+                    ? 'bg-[#22D3EE] text-[#020617]'
+                    : 'bg-[#050A19] border border-[#26314A] text-[#94A3B8] hover:text-white'
+                }`}
+              >
+                {type}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* TAB 1: CURATED RESOURCES GRID */}
       {activeTab === 'resources' && (
-        <div className="space-y-6">
-          {/* SEARCH & FILTERS TOOLBAR */}
-          <div className="bg-[#11182B] border border-[#26314A] rounded-2xl p-4 flex flex-col md:flex-row items-center justify-between gap-4">
-            <div className="relative w-full md:w-80">
-              <Search className="w-4 h-4 text-[#64748B] absolute left-3.5 top-1/2 -translate-y-1/2" />
-              <input
-                type="text"
-                placeholder="Search resources by title or skill..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full bg-[#050A19] border border-[#26314A] rounded-xl pl-10 pr-4 py-2 text-xs text-white placeholder-[#64748B] focus:outline-none focus:border-[#5B3DF5]"
-              />
-            </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredResources.map((res) => (
+            <div
+              key={res.id}
+              className="bg-[#11182B] border border-[#26314A] hover:border-[#5B3DF5] rounded-2xl p-6 flex flex-col justify-between space-y-4 shadow-xl transition-all group"
+            >
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="px-2.5 py-0.5 rounded bg-[#050A19] border border-[#26314A] text-[10px] font-mono text-[#22D3EE] font-bold">
+                    {res.skill}
+                  </span>
+                  <span className="text-[11px] text-[#64748B] font-mono">{res.provider}</span>
+                </div>
 
-            <div className="flex items-center gap-2 overflow-x-auto w-full md:w-auto">
-              {['ALL', 'VIDEO', 'DOCUMENTATION', 'COURSE', 'PRACTICE'].map(cat => (
-                <button
-                  key={cat}
-                  onClick={() => setResourceFilter(cat)}
-                  className={`px-3 py-1.5 rounded-lg text-[11px] font-semibold transition-all whitespace-nowrap ${
-                    resourceFilter === cat
-                      ? 'bg-[#5B3DF5]/20 text-[#22D3EE] border border-[#5B3DF5]/40'
-                      : 'bg-[#050A19] text-[#94A3B8] border border-[#26314A] hover:text-white'
-                  }`}
-                >
-                  {cat}
-                </button>
-              ))}
-            </div>
-          </div>
+                <h3 className="font-bold text-base text-white group-hover:text-[#22D3EE] transition-colors leading-snug">
+                  {res.title}
+                </h3>
 
-          {/* RESOURCE CARDS GRID */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {filteredResources.map((res) => {
-              const IconComp = res.icon;
-              return (
-                <div
-                  key={res.id}
-                  className="bg-[#11182B] border border-[#26314A] hover:border-[#3B82F6] rounded-2xl p-6 space-y-4 transition-all shadow-lg flex flex-col justify-between"
-                >
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between">
-                      <span className="px-2.5 py-1 rounded-full bg-[#050A19] border border-[#26314A] text-[#22D3EE] text-[10px] font-bold">
-                        {res.skill}
-                      </span>
-                      <span className="text-[10px] font-bold text-[#64748B] uppercase tracking-wider">
-                        {res.difficulty}
-                      </span>
-                    </div>
+                <div className="flex items-center justify-between text-xs text-[#94A3B8]">
+                  <span>Type: {res.type}</span>
+                  <span>Est: {res.duration}</span>
+                </div>
 
-                    <div className="flex items-start gap-3">
-                      <div className="w-10 h-10 rounded-xl bg-[#050A19] border border-[#26314A] flex items-center justify-center text-[#5B3DF5] shrink-0">
-                        <IconComp className="w-5 h-5" />
-                      </div>
-                      <div>
-                        <h3 className="font-bold text-white text-base leading-snug">{res.title}</h3>
-                        <p className="text-xs text-[#94A3B8] mt-1">{res.type} • {res.duration}</p>
-                      </div>
-                    </div>
+                {/* Progress Bar */}
+                <div className="space-y-1">
+                  <div className="flex justify-between text-[10px] text-[#94A3B8]">
+                    <span>User Progress</span>
+                    <span className="font-bold text-white">{res.progress}%</span>
                   </div>
-
-                  <div className="space-y-3 pt-3 border-t border-[#26314A]">
-                    <div className="flex items-center justify-between text-xs text-[#94A3B8]">
-                      <span>Progress</span>
-                      <span className="font-semibold text-white">{res.progress}%</span>
-                    </div>
-                    <div className="w-full bg-[#050A19] h-2 rounded-full overflow-hidden border border-[#26314A]">
-                      <div className="bg-[#00E6A7] h-full rounded-full" style={{ width: `${res.progress}%` }} />
-                    </div>
-
-                    <a
-                      href={res.link}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="w-full py-2.5 bg-[#050A19] border border-[#26314A] hover:border-[#5B3DF5] text-white font-semibold text-xs rounded-xl transition-all flex items-center justify-center gap-2 mt-2"
-                    >
-                      <span>Open Learning Resource</span>
-                      <ArrowRight className="w-3.5 h-3.5 text-[#22D3EE]" />
-                    </a>
+                  <div className="w-full bg-[#050A19] h-1.5 rounded-full overflow-hidden border border-[#26314A]">
+                    <div className="bg-[#5B3DF5] h-full rounded-full" style={{ width: `${res.progress}%` }} />
                   </div>
                 </div>
-              );
-            })}
-          </div>
+              </div>
+
+              <a
+                href={res.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full py-2.5 bg-[#050A19] border border-[#26314A] hover:bg-[#5B3DF5] text-white font-semibold text-xs rounded-xl flex items-center justify-center gap-2 transition-all shadow-md"
+              >
+                <span>Open Resource</span> <ExternalLink className="w-3.5 h-3.5" />
+              </a>
+            </div>
+          ))}
         </div>
       )}
 
-      {/* TABS CONTENT 2: QUIZZES */}
+      {/* TAB 2: TECHNICAL QUIZZES GRID */}
       {activeTab === 'quizzes' && (
-        <div className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {quizzes.map((quiz) => {
-              const isCompleted = quiz.status === 'COMPLETED';
-              const isRecommended = quiz.status === 'RECOMMENDED';
-
-              return (
-                <div
-                  key={quiz.id}
-                  className={`bg-[#11182B] border rounded-2xl p-6 space-y-4 transition-all shadow-lg flex flex-col justify-between ${
-                    isRecommended
-                      ? 'border-[#5B3DF5] shadow-lg shadow-[#5B3DF5]/10'
-                      : 'border-[#26314A]'
-                  }`}
-                >
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between">
-                      <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase ${
-                        isCompleted ? 'bg-[#00E6A7]/10 text-[#00E6A7] border border-[#00E6A7]/30' : 'bg-[#5B3DF5]/20 text-[#22D3EE] border border-[#5B3DF5]/40'
-                      }`}>
-                        {quiz.status}
-                      </span>
-                      <span className="text-[10px] text-[#64748B] font-bold">{quiz.difficulty}</span>
-                    </div>
-
-                    <div>
-                      <h3 className="font-bold text-white text-base leading-snug">{quiz.title}</h3>
-                      <p className="text-xs text-[#94A3B8] mt-1">{quiz.skill}</p>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-2 pt-2 text-xs">
-                      <div className="p-2.5 bg-[#050A19] border border-[#26314A] rounded-xl text-center">
-                        <div className="text-[10px] text-[#64748B] font-bold">QUESTIONS</div>
-                        <div className="font-bold text-white mt-0.5">{quiz.questionsCount}</div>
-                      </div>
-                      <div className="p-2.5 bg-[#050A19] border border-[#26314A] rounded-xl text-center">
-                        <div className="text-[10px] text-[#64748B] font-bold">TIME</div>
-                        <div className="font-bold text-[#22D3EE] mt-0.5">{quiz.timeLimit}</div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="space-y-3 pt-3 border-t border-[#26314A]">
-                    {quiz.score !== null && (
-                      <div className="flex items-center justify-between text-xs">
-                        <span className="text-[#94A3B8]">Last Score</span>
-                        <span className="font-extrabold text-[#00E6A7] text-sm">{quiz.score}%</span>
-                      </div>
-                    )}
-
-                    <button
-                      onClick={() => {
-                        if (quiz.exercise) {
-                          setActiveQuizModal(quiz);
-                          setSelectedOption(null);
-                          setSubmitted(false);
-                          setShowHint(false);
-                        }
-                      }}
-                      className="w-full py-2.5 bg-[#5B3DF5] hover:bg-[#633BFF] text-white font-semibold text-xs rounded-xl shadow-lg shadow-[#5B3DF5]/20 transition-all flex items-center justify-center gap-2"
-                    >
-                      <span>{isCompleted ? 'Review Quiz' : quiz.progress > 0 ? 'Continue Quiz' : 'Start Quiz'}</span>
-                      <ArrowRight className="w-3.5 h-3.5" />
-                    </button>
-                  </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {quizzes.map((quiz) => (
+            <div
+              key={quiz.id}
+              className="bg-[#11182B] border border-[#26314A] rounded-2xl p-6 space-y-4 shadow-xl flex flex-col justify-between"
+            >
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="px-2.5 py-0.5 rounded bg-[#050A19] border border-[#26314A] text-[10px] font-mono text-[#22D3EE] font-bold">
+                    {quiz.skill}
+                  </span>
+                  {quiz.status === 'COMPLETED' ? (
+                    <span className="px-2.5 py-0.5 rounded-full bg-[#00E6A7]/10 border border-[#00E6A7]/30 text-[#00E6A7] font-bold text-[10px]">
+                      COMPLETED ({quiz.score}%)
+                    </span>
+                  ) : (
+                    <span className="px-2.5 py-0.5 rounded-full bg-[#5B3DF5]/20 border border-[#5B3DF5]/40 text-[#22D3EE] font-bold text-[10px]">
+                      AVAILABLE
+                    </span>
+                  )}
                 </div>
-              );
-            })}
-          </div>
+
+                <h3 className="font-bold text-base text-white">{quiz.title}</h3>
+
+                <div className="grid grid-cols-2 gap-2 text-xs text-[#94A3B8] bg-[#050A19] p-3 rounded-xl border border-[#26314A]">
+                  <div>Questions: <strong className="text-white">{quiz.questionsCount}</strong></div>
+                  <div>Time Limit: <strong className="text-white">{quiz.timeLimit}</strong></div>
+                </div>
+              </div>
+
+              <button
+                onClick={() => {
+                  setActiveQuizModal(quiz);
+                  setSelectedOption(null);
+                  setSubmitted(false);
+                }}
+                className="w-full py-3 bg-[#5B3DF5] hover:bg-[#633BFF] text-white font-semibold text-xs rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-[#5B3DF5]/30 transition-all"
+              >
+                <span>{quiz.status === 'COMPLETED' ? 'Retake Quiz' : 'Start Technical Quiz'}</span>
+                <ArrowRight className="w-4 h-4" />
+              </button>
+            </div>
+          ))}
         </div>
       )}
 
-      {/* ACTIVE QUIZ EXERCISE MODAL / HARNESS */}
-      {activeQuizModal && activeQuizModal.exercise && (
-        <div className="fixed inset-0 z-50 bg-[#020617]/90 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-[#11182B] border border-[#26314A] rounded-2xl max-w-2xl w-full p-6 sm:p-8 space-y-6 shadow-2xl relative max-h-[90vh] overflow-y-auto">
+      {/* QUIZ MODAL */}
+      {activeQuizModal && (
+        <div className="fixed inset-0 z-50 bg-[#020617]/90 flex items-center justify-center p-4">
+          <div className="bg-[#11182B] border border-[#26314A] rounded-2xl p-6 sm:p-8 max-w-xl w-full space-y-6 shadow-2xl">
             <div className="flex items-center justify-between border-b border-[#26314A] pb-4">
               <div>
-                <span className="text-[10px] font-bold text-[#22D3EE] uppercase tracking-wider">
-                  {activeQuizModal.title}
-                </span>
-                <h2 className="text-lg font-bold text-white mt-0.5">{activeQuizModal.exercise.title}</h2>
+                <span className="text-[10px] font-mono text-[#22D3EE] font-bold">{activeQuizModal.skill}</span>
+                <h3 className="font-bold text-base text-white">{activeQuizModal.exercise.title}</h3>
               </div>
               <button
-                onClick={() => setShowHint(!showHint)}
-                className="px-3 py-1.5 bg-[#050A19] border border-[#26314A] text-[#22D3EE] text-xs font-semibold rounded-lg hover:border-[#5B3DF5] flex items-center gap-1.5"
+                onClick={() => setActiveQuizModal(null)}
+                className="text-xs text-[#94A3B8] hover:text-white"
               >
-                <HelpCircle className="w-4 h-4" /> Hint
+                ✕ Close
               </button>
             </div>
 
-            {showHint && (
-              <div className="p-4 bg-[#050A19] border border-[#22D3EE]/40 rounded-xl text-xs text-[#22D3EE] leading-relaxed">
-                {activeQuizModal.exercise.hint}
-              </div>
-            )}
-
             <div className="space-y-4 text-xs">
-              <p className="text-white font-semibold text-sm">{activeQuizModal.exercise.prompt}</p>
+              <p className="text-white font-medium">{activeQuizModal.exercise.prompt}</p>
 
               {activeQuizModal.exercise.code && (
-                <div className="p-4 bg-[#050A19] border border-[#26314A] rounded-xl font-mono text-xs text-[#22D3EE]">
-                  <pre>{activeQuizModal.exercise.code}</pre>
-                </div>
+                <pre className="p-4 bg-[#050A19] border border-[#26314A] rounded-xl font-mono text-[#22D3EE] overflow-x-auto">
+                  {activeQuizModal.exercise.code}
+                </pre>
               )}
 
-              <div className="space-y-2.5 pt-2">
+              <div className="space-y-2">
                 {activeQuizModal.exercise.options.map((opt: string, idx: number) => {
-                  const isSel = selectedOption === idx;
+                  const isSelected = selectedOption === idx;
+                  const isCorrect = idx === activeQuizModal.exercise.correctIdx;
                   return (
                     <button
                       key={idx}
-                      onClick={() => { setSelectedOption(idx); setSubmitted(false); }}
-                      className={`w-full text-left p-3.5 rounded-xl border text-xs font-medium transition-all flex items-center justify-between ${
-                        isSel
-                          ? 'bg-[#050A19] border-[#5B3DF5] text-white font-semibold ring-1 ring-[#5B3DF5]'
-                          : 'bg-[#050A19] border-[#26314A] text-[#94A3B8] hover:text-white hover:border-[#3B82F6]'
+                      onClick={() => !submitted && setSelectedOption(idx)}
+                      className={`w-full p-3 rounded-xl border text-left transition-all ${
+                        submitted
+                          ? isCorrect
+                            ? 'bg-[#00E6A7]/20 border-[#00E6A7] text-[#00E6A7]'
+                            : isSelected
+                            ? 'bg-rose-950/40 border-rose-500 text-rose-300'
+                            : 'bg-[#050A19] border-[#26314A] text-[#94A3B8]'
+                          : isSelected
+                          ? 'bg-[#5B3DF5] text-white border-[#5B3DF5]'
+                          : 'bg-[#050A19] border-[#26314A] text-[#94A3B8] hover:text-white'
                       }`}
                     >
-                      <span>{opt}</span>
-                      <div className={`w-4 h-4 rounded-full border ${isSel ? 'border-[#5B3DF5] bg-[#5B3DF5]' : 'border-[#26314A]'}`} />
+                      {opt}
                     </button>
                   );
                 })}
               </div>
 
-              {selectedOption !== null && !submitted && (
-                <button
-                  onClick={() => setSubmitted(true)}
-                  className="w-full py-3 bg-[#5B3DF5] hover:bg-[#633BFF] text-white font-semibold text-xs rounded-xl shadow-lg shadow-[#5B3DF5]/30"
-                >
-                  Submit Answer
-                </button>
-              )}
-
               {submitted && (
-                <div className={`p-4 rounded-xl border text-xs space-y-2 ${
-                  selectedOption === activeQuizModal.exercise.correctIdx
-                    ? 'bg-emerald-950/40 border-[#00E6A7]/50 text-emerald-200'
-                    : 'bg-rose-950/40 border-rose-500/50 text-rose-200'
-                }`}>
-                  <div className="flex items-center gap-2 font-bold text-sm">
-                    {selectedOption === activeQuizModal.exercise.correctIdx ? (
-                      <CheckCircle2 className="w-5 h-5 text-[#00E6A7]" />
-                    ) : (
-                      <AlertCircle className="w-5 h-5 text-rose-400" />
-                    )}
-                    <span>{selectedOption === activeQuizModal.exercise.correctIdx ? 'CORRECT ANSWER!' : 'INCORRECT'}</span>
-                  </div>
-                  <p>{activeQuizModal.exercise.explanation}</p>
+                <div className="p-4 bg-[#050A19] border border-[#26314A] rounded-xl text-xs space-y-1">
+                  <div className="font-bold text-white">Explanation:</div>
+                  <p className="text-[#94A3B8]">{activeQuizModal.exercise.explanation}</p>
                 </div>
               )}
             </div>
 
-            <div className="pt-4 border-t border-[#26314A] flex justify-end">
-              <button
-                onClick={() => setActiveQuizModal(null)}
-                className="px-5 py-2 bg-[#050A19] border border-[#26314A] text-xs font-semibold text-[#94A3B8] hover:text-white rounded-xl"
-              >
-                Close Quiz
-              </button>
+            <div className="flex justify-end gap-3 pt-2">
+              {!submitted ? (
+                <button
+                  onClick={() => setSubmitted(true)}
+                  disabled={selectedOption === null}
+                  className="px-6 py-2.5 bg-[#5B3DF5] hover:bg-[#633BFF] text-white font-bold text-xs rounded-xl shadow-md disabled:opacity-50"
+                >
+                  Submit Answer
+                </button>
+              ) : (
+                <button
+                  onClick={() => setActiveQuizModal(null)}
+                  className="px-6 py-2.5 bg-[#00E6A7] text-[#020617] font-bold text-xs rounded-xl shadow-md"
+                >
+                  Done
+                </button>
+              )}
             </div>
           </div>
         </div>
@@ -447,4 +411,3 @@ console.log('4');`,
     </div>
   );
 }
-

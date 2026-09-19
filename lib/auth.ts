@@ -9,6 +9,7 @@ export interface UserSession {
   role: 'LEARNER' | 'ADMIN';
   mobile?: string;
   isVerified: boolean;
+  onboardingCompleted?: boolean;
 }
 
 // Generate simple secure session token
@@ -24,12 +25,16 @@ export function parseSessionToken(token: string): UserSession | null {
     if (!token) return null;
 
     if (token === 'user-token' || token === 'user-token-demo') {
+      const db = readDB();
+      const user = db.users.find(u => u.email === 'learner@competencyai.com');
+      const profile = user ? db.profiles.find(p => p.userId === user.id) : null;
       return {
-        id: 'usr-demo-01',
-        email: 'learner@competencyai.com',
-        fullName: 'Learner User',
+        id: user?.id || 'usr-demo-01',
+        email: user?.email || 'learner@competencyai.com',
+        fullName: user?.fullName || 'Learner User',
         role: 'LEARNER',
-        isVerified: true
+        isVerified: true,
+        onboardingCompleted: !!profile?.targetCareerId
       };
     }
 
@@ -39,7 +44,8 @@ export function parseSessionToken(token: string): UserSession | null {
         email: 'admin',
         fullName: 'CompetencyAI Lead Administrator',
         role: 'ADMIN',
-        isVerified: true
+        isVerified: true,
+        onboardingCompleted: true
       };
     }
 
@@ -54,15 +60,63 @@ export function parseSessionToken(token: string): UserSession | null {
     const data = JSON.parse(Buffer.from(payloadStr, 'base64url').toString('utf-8'));
     if (data.exp && Date.now() > data.exp) return null;
 
+    const db = readDB();
+    const user = db.users.find(u => u.id === data.id || u.email === data.email);
+    const profile = user ? db.profiles.find(p => p.userId === user.id) : null;
+
     return {
-      id: data.id,
-      email: data.email,
-      fullName: data.fullName,
+      id: user?.id || data.id,
+      email: user?.email || data.email,
+      fullName: user?.fullName || data.fullName,
       role: data.role,
       mobile: data.mobile,
-      isVerified: data.isVerified
+      isVerified: data.isVerified,
+      onboardingCompleted: !!profile?.targetCareerId
     };
   } catch (e) {
     return null;
   }
+}
+
+export function registerNewUser(fullName: string, email: string, passwordPlain: string) {
+  const db = readDB();
+  const existing = db.users.find(u => u.email.toLowerCase() === email.toLowerCase());
+  if (existing) {
+    throw new Error('User with this email already exists.');
+  }
+
+  const userId = 'usr-' + Date.now() + '-' + Math.random().toString(36).substring(2, 7);
+  const newUser = {
+    id: userId,
+    email: email.toLowerCase(),
+    passwordHash: hashPassword(passwordPlain),
+    fullName,
+    isVerified: true,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
+  };
+
+  db.users.push(newUser);
+
+  // Initialize empty profile
+  db.profiles.push({
+    id: 'prof-' + userId,
+    userId,
+    fullName,
+    createdAt: new Date().toISOString()
+  });
+
+  writeDB(db);
+
+  const sessionUser: UserSession = {
+    id: userId,
+    email: newUser.email,
+    fullName: newUser.fullName,
+    role: 'LEARNER',
+    isVerified: true,
+    onboardingCompleted: false
+  };
+
+  const token = createSessionToken(sessionUser);
+  return { user: sessionUser, token };
 }

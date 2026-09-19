@@ -220,7 +220,7 @@ export default function KnowledgeGraphPage() {
 
             <div className="space-y-3 text-xs">
               <div className="bg-[#050A19] border border-[#26314A] p-4 rounded-xl space-y-1">
-                <div className="text-[10px] font-bold text-[#64748B] uppercase tracking-wider">ASSESSMENT SCORE & PROFICIENCY</div>
+                <div className="text-[10px] font-bold text-[#64748B] uppercase tracking-wider">COMPETENCY & PROFICIENCY SCORE</div>
                 <div className="text-lg font-bold text-white">{selectedNode.score}% <span className="text-xs font-normal text-[#94A3B8]">(Level {selectedNode.levelMastered}/10)</span></div>
               </div>
 

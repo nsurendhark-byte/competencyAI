@@ -103,7 +103,7 @@ export default function LoginPage() {
                   required
                   value={identifier}
                   onChange={(e) => setIdentifier(e.target.value)}
-                  placeholder="demo.student@college.edu"
+                  placeholder="alex.morgan@university.edu"
                   className="w-full bg-[#050A19] border border-[#26314A] rounded-xl pl-9 pr-3 py-2.5 text-xs text-[#F8FAFC] placeholder-[#64748B] focus:outline-none focus:border-[#5B3DF5] transition-all"
                 />
               </div>
@@ -114,9 +114,9 @@ export default function LoginPage() {
                 <label className="block text-xs font-semibold text-[#94A3B8]">
                   Password
                 </label>
-                <a href="#" className="text-xs text-[#3B82F6] hover:underline font-medium">
+                <Link href="/forgot-password" className="text-xs text-[#3B82F6] hover:underline font-medium">
                   Forgot?
-                </a>
+                </Link>
               </div>
               <div className="relative">
                 <Lock className="w-4 h-4 absolute left-3 top-3 text-[#64748B]" />
