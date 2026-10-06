@@ -29,7 +29,7 @@ export default function AuraPage() {
 
     try {
       const stored = typeof window !== 'undefined' ? localStorage.getItem('competency_user_session') : null;
-      let userId = 'usr-demo-01';
+      let userId = '';
       if (stored) {
         try {
           const parsed = JSON.parse(stored);

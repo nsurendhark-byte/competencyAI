@@ -32,6 +32,7 @@ import {
   HelpCircle
 } from 'lucide-react';
 import { safeFetch } from '@/lib/api-response';
+import CompetencyLogo from '@/components/CompetencyLogo';
 
 export default function LearnerAppLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -135,15 +136,12 @@ export default function LearnerAppLayout({ children }: { children: React.ReactNo
           </button>
 
           <Link href="/app/dashboard" className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-lg bg-[#050A19] border border-[#3B82F6]/40 flex items-center justify-center text-[#22D3EE] shadow-[0_0_10px_rgba(34,211,238,0.2)]">
-              <Sparkles className="w-4 h-4" />
-            </div>
-            <span className="font-bold text-sm tracking-tight text-white">CompetencyAI</span>
+            <CompetencyLogo size="sm" />
           </Link>
 
           <div className="hidden sm:flex items-center gap-2 text-xs text-[#64748B]">
             <span className="text-[#26314A]">|</span>
-            <span className="px-2 py-0.5 rounded bg-[#11182B] border border-[#26314A] text-[10px] font-semibold text-[#22D3EE] tracking-wider uppercase">
+            <span className="px-2 py-0.5 rounded bg-[#11182B] border border-[#26314A] text-[10px] font-semibold text-[#22D3EE] tracking-wider uppercase font-mono">
               Knowledge Graph
             </span>
             <span className="text-[#26314A]">|</span>
@@ -151,28 +149,20 @@ export default function LearnerAppLayout({ children }: { children: React.ReactNo
           </div>
         </div>
 
-        {/* Right User Telemetry & Status */}
+        {/* Right User Info & Profile */}
         <div className="flex items-center gap-3">
-          <div className="hidden md:flex items-center gap-2 text-xs">
-            <span className="px-2.5 py-1 rounded-full bg-[#11182B] border border-[#26314A] text-[#94A3B8] font-medium">
-              Demo Scenario
-            </span>
-            <span className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#11182B] border border-[#26314A] text-amber-400 font-semibold">
-              <Flame className="w-3.5 h-3.5 text-amber-400 fill-amber-400/20" />
-              <span>7d</span>
-            </span>
-            <span className="px-2.5 py-1 rounded-full bg-[#11182B] border border-[#26314A] text-[#22D3EE] font-semibold">
-              550 XP
-            </span>
-          </div>
-
-          <div className="flex items-center gap-2 pl-2 border-l border-[#26314A]">
-            <div className="w-7 h-7 rounded-full bg-[#5B3DF5] text-white flex items-center justify-center font-bold text-xs shadow-md">
-              {user?.fullName?.charAt(0) || 'D'}
+          <div className="flex items-center gap-2.5 pl-2">
+            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-600 to-cyan-600 text-white flex items-center justify-center font-bold text-xs shadow-md border border-cyan-500/30">
+              {user?.fullName?.charAt(0)?.toUpperCase() || 'U'}
             </div>
-            <span className="hidden sm:inline text-xs font-semibold text-[#F8FAFC]">
-              {user?.fullName || 'Demo Student'}
-            </span>
+            <div className="hidden sm:flex flex-col">
+              <span className="text-xs font-bold text-[#F8FAFC] tracking-tight">
+                {user?.fullName || 'Authenticated User'}
+              </span>
+              <span className="text-[10px] text-[#94A3B8] font-mono">
+                {user?.email || ''}
+              </span>
+            </div>
           </div>
         </div>
       </header>

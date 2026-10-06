@@ -4,8 +4,9 @@ import { useState } from 'react';
 import Link from 'next/link';
 import PublicNavbar from '@/components/PublicNavbar';
 import PublicFooter from '@/components/PublicFooter';
-import { Sparkles, ArrowRight, AlertCircle, Lock, Mail } from 'lucide-react';
+import { ArrowRight, AlertCircle, Lock, Mail } from 'lucide-react';
 import { safeFetch } from '@/lib/api-response';
+import CompetencyLogo from '@/components/CompetencyLogo';
 
 export default function LoginPage() {
   const [identifier, setIdentifier] = useState('');
@@ -67,12 +68,12 @@ export default function LoginPage() {
       <PublicNavbar />
 
       <main className="flex-1 flex items-center justify-center py-12 px-4">
-        {/* Centered Login Card matching Screenshot #2 */}
+        {/* Centered Login Card */}
         <div className="w-full max-w-[360px] bg-[#11182B] border border-[#26314A] rounded-2xl p-7 space-y-6 shadow-2xl">
           {/* Logo and Header */}
-          <div className="text-center space-y-2">
-            <div className="w-10 h-10 rounded-xl bg-[#050A19] border border-[#3B82F6]/40 flex items-center justify-center text-[#22D3EE] mx-auto shadow-sm shadow-[#22D3EE]/20">
-              <Sparkles className="w-5 h-5 text-[#22D3EE]" />
+          <div className="text-center space-y-3">
+            <div className="flex justify-center">
+              <CompetencyLogo variant="mark" size="lg" />
             </div>
             <h1 className="text-xl font-extrabold text-[#F8FAFC] tracking-tight">
               Sign In to CompetencyAI
@@ -103,7 +104,7 @@ export default function LoginPage() {
                   required
                   value={identifier}
                   onChange={(e) => setIdentifier(e.target.value)}
-                  placeholder="alex.morgan@university.edu"
+                  placeholder="Enter your email address"
                   className="w-full bg-[#050A19] border border-[#26314A] rounded-xl pl-9 pr-3 py-2.5 text-xs text-[#F8FAFC] placeholder-[#64748B] focus:outline-none focus:border-[#5B3DF5] transition-all"
                 />
               </div>

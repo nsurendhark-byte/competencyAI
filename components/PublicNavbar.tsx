@@ -2,7 +2,8 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { Sparkles, ArrowRight, Menu, X } from 'lucide-react';
+import { ArrowRight, Menu, X } from 'lucide-react';
+import CompetencyLogo from '@/components/CompetencyLogo';
 
 export default function PublicNavbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -28,13 +29,8 @@ export default function PublicNavbar() {
             {mobileMenuOpen ? <X className="w-5 h-5 text-white" /> : <Menu className="w-5 h-5 text-white" />}
           </button>
 
-          <Link href="/" className="flex items-center gap-2.5 group">
-            <div className="w-8 h-8 rounded-lg bg-[#050A19] border border-[#3B82F6]/40 flex items-center justify-center text-[#22D3EE] shadow-sm shadow-[#22D3EE]/20 group-hover:border-[#22D3EE] transition-all">
-              <Sparkles className="w-4 h-4 text-[#22D3EE]" />
-            </div>
-            <span className="font-poppins text-lg font-bold tracking-tight text-[#F8FAFC]">
-              CompetencyAI
-            </span>
+          <Link href="/">
+            <CompetencyLogo size="md" />
           </Link>
 
           {/* Desktop Nav Items */}
