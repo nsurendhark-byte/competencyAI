@@ -11,7 +11,7 @@ import { safeFetch } from '@/lib/api-response';
 function ResetPasswordForm() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const token = searchParams ? searchParams.get('token') || '' : '';
+  const token = searchParams.get('token') || '';
 
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
